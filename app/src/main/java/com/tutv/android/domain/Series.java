@@ -1,17 +1,26 @@
 package com.tutv.android.domain;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import androidx.room.Relation;
+
+import java.util.List;
 
 @Entity(tableName = "series")
 public class Series {
 
     @PrimaryKey
+    @ColumnInfo(name = "series_id")
     private int id;
+
     private int followers;
 
     private String name;
     private String seriesDescription;
+
+    @Ignore List<Season> seasons;
 
     public String getName() {
         return name;
@@ -43,5 +52,13 @@ public class Series {
 
     public void setFollowers(int followers) {
         this.followers = followers;
+    }
+
+    public List<Season> getSeasons() {
+        return seasons;
+    }
+
+    public void setSeasons(List<Season> seasons) {
+        this.seasons = seasons;
     }
 }

@@ -1,6 +1,7 @@
 package com.tutv.android.ui.series;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,11 +10,11 @@ import com.tutv.android.di.Container;
 import com.tutv.android.di.ContainerLocator;
 import com.tutv.android.repository.SeriesRepository;
 
-import kotlin.NotImplementedError;
-
 public class SeriesActivity extends AppCompatActivity implements SeriesView {
 
     private SeriesPresenter seriesPresenter;
+
+    private TextView seriesDescriptionTextView, seriesFollowerCountTextView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -22,6 +23,9 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
         int seriesId = getIntent().getExtras().getInt("series_id");
 
         setContentView(R.layout.activity_series);
+
+        this.seriesDescriptionTextView = (TextView) findViewById(R.id.series_description);
+        this.seriesFollowerCountTextView = (TextView) findViewById(R.id.series_follower_count);
 
         Container container = ContainerLocator.locateComponent(this);
         SeriesRepository seriesRepository = container.getSeriesRepository();
@@ -50,6 +54,7 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
     @Override
     public void showSeriesDescription(String seriesDescription) {
         //throw new NotImplementedError();
+        this.seriesDescriptionTextView.setText(seriesDescription);
     }
 
     @Override
@@ -60,6 +65,7 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
     @Override
     public void showFollowerCount(int followers) {
         //throw new NotImplementedError();
+        this.seriesFollowerCountTextView.setText("Followers: " + followers);
     }
 
 }

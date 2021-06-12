@@ -10,7 +10,7 @@ import com.tutv.android.domain.Series;
 @Dao
 public interface SeriesDao {
 
-    @Query("SELECT * FROM series WHERE :id = id")
+    @Query("SELECT * FROM series WHERE :id = series_id")
     Series getSeriesById(int id);
 
     @Insert
