@@ -42,8 +42,6 @@ public class SeriesPresenter {
         }
     }
 
-
-
     private void onSeriesLoadError(final Throwable e) {
 
     }

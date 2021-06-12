@@ -20,6 +20,9 @@ import java.util.List;
 
 import kotlin.NotImplementedError;
 
+import static android.view.View.*;
+import static android.view.View.VISIBLE;
+
 public class SeasonListAdapter extends RecyclerView.Adapter<SeasonListAdapter.ViewHolder> {
 
     private final List<Season> seasonList;
@@ -50,6 +53,7 @@ public class SeasonListAdapter extends RecyclerView.Adapter<SeasonListAdapter.Vi
     public void onBindViewHolder(@NonNull @NotNull ViewHolder holder, int position) {
         holder.setSeasonNumber(seasonList.get(position).getNumber());
         holder.setEpisodes(seasonList.get(position).getEpisodes());
+        holder.setEpisodeListVisible(seasonList.get(position).isExpanded());
     }
 
     @Override
@@ -71,6 +75,12 @@ public class SeasonListAdapter extends RecyclerView.Adapter<SeasonListAdapter.Vi
 
             episodeListAdapter = new EpisodeListAdapter();
             seasonEpisodeRecyclerView.setAdapter(episodeListAdapter);
+
+            seasonNumberTextView.setOnClickListener(event -> {
+                Season season = seasonList.get(getAdapterPosition());
+                season.setExpanded(!season.isExpanded());
+                notifyItemChanged(getAdapterPosition());
+            });
         }
 
         public void setSeasonNumber(int seasonNumber) {
@@ -79,6 +89,10 @@ public class SeasonListAdapter extends RecyclerView.Adapter<SeasonListAdapter.Vi
 
         public void setEpisodes(List<Episode> episodesList) {
             episodeListAdapter.update(episodesList);
+        }
+
+        public void setEpisodeListVisible(boolean visible) {
+            seasonEpisodeRecyclerView.setVisibility(visible ? VISIBLE : GONE);
         }
 
     }

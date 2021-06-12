@@ -11,11 +11,13 @@ import java.util.List;
 public class Season {
 
     @PrimaryKey
-    @ColumnInfo(name = "season_id") private int id;
-
-    @Ignore List<Episode> episodes;
+    @ColumnInfo(name = "season_id")
+    private int id;
 
     private int number;
+
+    @Ignore List<Episode> episodes;
+    @Ignore boolean isExpanded = false;
 
     public int getId() {
         return id;
@@ -39,5 +41,13 @@ public class Season {
 
     public void setEpisodes(List<Episode> episodes) {
         this.episodes = episodes;
+    }
+
+    public boolean isExpanded() {
+        return isExpanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+        isExpanded = expanded;
     }
 }
