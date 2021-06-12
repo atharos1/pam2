@@ -31,11 +31,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Changed for testing purposes
-        /*Intent intent = new Intent(this, SeriesActivity.class);
+        Intent intent = new Intent(this, SeriesActivity.class);
         intent.putExtra("series_id", 66732);
 
-        startActivity(intent);*/
-        startActivity(new Intent(this, LoginActivity.class));
+        startActivity(intent);
+        //startActivity(new Intent(this, LoginActivity.class));
     }
 
 }

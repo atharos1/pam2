@@ -10,12 +10,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tutv.android.R;
+import com.tutv.android.domain.Episode;
 import com.tutv.android.domain.Season;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import kotlin.NotImplementedError;
 
 public class SeasonListAdapter extends RecyclerView.Adapter<SeasonListAdapter.ViewHolder> {
 
@@ -46,6 +49,7 @@ public class SeasonListAdapter extends RecyclerView.Adapter<SeasonListAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull @NotNull ViewHolder holder, int position) {
         holder.setSeasonNumber(seasonList.get(position).getNumber());
+        holder.setEpisodes(seasonList.get(position).getEpisodes());
     }
 
     @Override
@@ -56,15 +60,25 @@ public class SeasonListAdapter extends RecyclerView.Adapter<SeasonListAdapter.Vi
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView seasonNumberTextView;
+        private RecyclerView seasonEpisodeRecyclerView;
+        private EpisodeListAdapter episodeListAdapter;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
 
             seasonNumberTextView = (TextView) itemView.findViewById(R.id.season_number);
+            seasonEpisodeRecyclerView = (RecyclerView) itemView.findViewById(R.id.season_episode_recyclerview);
+
+            episodeListAdapter = new EpisodeListAdapter();
+            seasonEpisodeRecyclerView.setAdapter(episodeListAdapter);
         }
 
         public void setSeasonNumber(int seasonNumber) {
             seasonNumberTextView.setText("Season " + seasonNumber);
+        }
+
+        public void setEpisodes(List<Episode> episodesList) {
+            episodeListAdapter.update(episodesList);
         }
 
     }
