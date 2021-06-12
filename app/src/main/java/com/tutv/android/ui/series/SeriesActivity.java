@@ -41,6 +41,10 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
         this.seasonListAdapter = new SeasonListAdapter();
         seasonRecyclerView.setAdapter(seasonListAdapter);
 
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+
         Container container = ContainerLocator.locateComponent(this);
         SeriesRepository seriesRepository = container.getSeriesRepository();
         seriesPresenter = new SeriesPresenter(this, seriesId, seriesRepository);
