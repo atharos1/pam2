@@ -32,7 +32,13 @@ public class SeriesPresenter {
     public void onViewDetached() {}
 
     private void onSeriesLoad(Series series) {
-
+        SeriesView actualView = seriesView.get();
+        if(actualView != null) {
+            actualView.showSeriesName(series.getName());
+            actualView.showSeriesDescription(series.getSeriesDescription());
+            actualView.showUserFollows(false);
+            actualView.showFollowerCount(series.getFollowers());
+        }
     }
 
     private void onSeriesLoadError(final Throwable e) {

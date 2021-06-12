@@ -2,12 +2,13 @@ package com.tutv.android.ui.series;
 
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.tutv.android.di.Container;
 import com.tutv.android.di.ContainerLocator;
 import com.tutv.android.repository.SeriesRepository;
+
+import kotlin.NotImplementedError;
 
 public class SeriesActivity extends AppCompatActivity implements SeriesView {
 
@@ -37,4 +38,25 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
 
         seriesPresenter.onViewDetached();
     }
+
+    @Override
+    public void showSeriesName(String seriesName) {
+        throw new NotImplementedError();
+    }
+
+    @Override
+    public void showSeriesDescription(String seriesDescription) {
+        throw new NotImplementedError();
+    }
+
+    @Override
+    public void showUserFollows(boolean follows) {
+        throw new NotImplementedError();
+    }
+
+    @Override
+    public void showFollowerCount(int followers) {
+        throw new NotImplementedError();
+    }
+
 }
