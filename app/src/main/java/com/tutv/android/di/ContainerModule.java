@@ -3,9 +3,12 @@ package com.tutv.android.di;
 import android.content.Context;
 
 import com.tutv.android.datasource.retrofit.RetrofitInstance;
+import com.tutv.android.datasource.retrofit.endpoint.SeriesAPI;
 import com.tutv.android.datasource.retrofit.endpoint.UserAPI;
 import com.tutv.android.db.AppDatabase;
+import com.tutv.android.db.dao.SeriesDao;
 import com.tutv.android.db.dao.UserDao;
+import com.tutv.android.repository.SeriesRepository;
 import com.tutv.android.repository.UserRepository;
 
 public class ContainerModule {
@@ -29,5 +32,18 @@ public class ContainerModule {
 
     public UserAPI provideUserAPI() {
         return RetrofitInstance.getRetrofitClient().create(UserAPI.class);
+    }
+
+    public SeriesRepository provideSeriesRepository(final SeriesDao seriesDao, SeriesAPI seriesAPI) {
+        return new SeriesRepository(seriesDao, seriesAPI);
+    }
+
+
+    public SeriesDao provideSeriesDao() {
+        return AppDatabase.getInstance(applicationContext).seriesDao();
+    }
+
+    public SeriesAPI provideSeriesAPI() {
+        return RetrofitInstance.getRetrofitClient().create(SeriesAPI.class);
     }
 }
