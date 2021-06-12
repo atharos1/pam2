@@ -6,6 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import com.tutv.android.db.dao.SeriesDao;
 import com.tutv.android.db.dao.UserDao;
 import com.tutv.android.domain.User;
 
@@ -15,6 +16,7 @@ public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase instance;
 
     public abstract UserDao userDao();
+    public abstract SeriesDao seriesDao();
 
     public static synchronized AppDatabase getInstance(final Context context) {
         if(instance == null) {

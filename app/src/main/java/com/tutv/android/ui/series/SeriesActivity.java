@@ -1,20 +1,27 @@
 package com.tutv.android.ui.series;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.tutv.android.di.Container;
+import com.tutv.android.di.ContainerLocator;
+import com.tutv.android.repository.SeriesRepository;
 
 public class SeriesActivity extends AppCompatActivity implements SeriesView {
 
     private SeriesPresenter seriesPresenter;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        seriesPresenter = new SeriesPresenter(this);
+        int seriesId = savedInstanceState.getInt("series_id");
+
+        Container container = ContainerLocator.locateComponent(this);
+        SeriesRepository seriesRepository = container.getSeriesRepository();
+        seriesPresenter = new SeriesPresenter(this, seriesId, seriesRepository);
     }
 
     @Override

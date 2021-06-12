@@ -1,15 +1,42 @@
 package com.tutv.android.ui.series;
 
+import com.tutv.android.domain.Series;
+import com.tutv.android.repository.SeriesRepository;
+
+import java.lang.ref.WeakReference;
+
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+
 public class SeriesPresenter {
 
-    private SeriesView seriesView;
+    private WeakReference<SeriesView> seriesView;
 
-    public SeriesPresenter(SeriesView seriesView) {
-        this.seriesView = seriesView;
+    private SeriesRepository seriesRepository;
+    private int seriesId;
+
+    public SeriesPresenter(SeriesView seriesView, int seriesId, SeriesRepository seriesRepository) {
+        this.seriesView = new WeakReference<>(seriesView);
+        this.seriesId = seriesId;
+        this.seriesRepository = seriesRepository;
     }
 
-    public void onViewAttached() {}
+    public void onViewAttached() {
+        seriesRepository.getSeriesById(seriesId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onSeriesLoad, this::onSeriesLoadError);
+    }
 
     public void onViewDetached() {}
+
+    private void onSeriesLoad(Series series) {
+
+    }
+
+    private void onSeriesLoadError(final Throwable e) {
+
+    }
 
 }
