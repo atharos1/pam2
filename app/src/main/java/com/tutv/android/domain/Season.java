@@ -2,12 +2,13 @@ package com.tutv.android.domain;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.util.List;
 
-@Entity(tableName = "season")
+@Entity(tableName = "season", foreignKeys = {@ForeignKey(entity = Series.class, parentColumns = "series_id", childColumns = "series_id")})
 public class Season {
 
     @PrimaryKey
@@ -18,6 +19,8 @@ public class Season {
 
     @Ignore List<Episode> episodes;
     @Ignore boolean isExpanded = false;
+
+    @ColumnInfo(name = "series_id") private int seriesId;
 
     public int getId() {
         return id;
@@ -49,5 +52,13 @@ public class Season {
 
     public void setExpanded(boolean expanded) {
         isExpanded = expanded;
+    }
+
+    public int getSeriesId() {
+        return seriesId;
+    }
+
+    public void setSeriesId(int seriesId) {
+        this.seriesId = seriesId;
     }
 }

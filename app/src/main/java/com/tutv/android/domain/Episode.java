@@ -2,9 +2,10 @@ package com.tutv.android.domain;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-@Entity
+@Entity(foreignKeys = {@ForeignKey(entity = Season.class, parentColumns = "season_id", childColumns = "season_id")})
 public class Episode {
 
     @PrimaryKey
@@ -13,6 +14,9 @@ public class Episode {
 
     private String name;
     @ColumnInfo(name = "num_episode") private int numEpisode;
+
+    @ColumnInfo(name = "season_id")
+    private int seasonId;
 
     public int getId() {
         return id;
@@ -36,5 +40,13 @@ public class Episode {
 
     public void setNumEpisode(int numEpisode) {
         this.numEpisode = numEpisode;
+    }
+
+    public int getSeasonId() {
+        return seasonId;
+    }
+
+    public void setSeasonId(int seasonId) {
+        this.seasonId = seasonId;
     }
 }
