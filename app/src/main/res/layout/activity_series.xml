@@ -34,11 +34,12 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fillViewport="true"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
             <TextView
                 android:layout_width="match_parent"
@@ -49,12 +50,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
+                android:layout_below="@id/series_description"
                 android:id="@+id/series_follower_count"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/series_season_recyclerview"/>
-        </LinearLayout>
+                android:id="@+id/series_season_recyclerview"
+                android:layout_below="@id/series_follower_count"
+                android:layout_margin="5dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+        </RelativeLayout>
 
     </androidx.core.widget.NestedScrollView>
 

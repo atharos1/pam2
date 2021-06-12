@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "13914ff97cb615bbb2122e8ea24c08bd",
+    "identityHash": "332b64cf8ebc927efb727a34b91e7e17",
     "entities": [
       {
         "tableName": "user",
@@ -93,7 +93,7 @@
         "foreignKeys": []
       },
       {
-        "tableName": "Season",
+        "tableName": "season",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`season_id` INTEGER NOT NULL, `number` INTEGER NOT NULL, PRIMARY KEY(`season_id`))",
         "fields": [
           {
@@ -122,7 +122,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '13914ff97cb615bbb2122e8ea24c08bd')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '332b64cf8ebc927efb727a34b91e7e17')"
     ]
   }
 }

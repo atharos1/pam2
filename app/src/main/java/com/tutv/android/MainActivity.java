@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Changed for testing purposes
         Intent intent = new Intent(this, SeriesActivity.class);
-        intent.putExtra("series_id", 70515);
+        intent.putExtra("series_id", 66732);
 
         startActivity(intent);
     }

@@ -4,17 +4,24 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.tutv.android.R;
 import com.tutv.android.di.Container;
 import com.tutv.android.di.ContainerLocator;
+import com.tutv.android.domain.Season;
 import com.tutv.android.repository.SeriesRepository;
+
+import java.util.List;
 
 public class SeriesActivity extends AppCompatActivity implements SeriesView {
 
     private SeriesPresenter seriesPresenter;
 
     private TextView seriesDescriptionTextView, seriesFollowerCountTextView;
+    private RecyclerView seasonRecyclerView;
+
+    private SeasonListAdapter seasonListAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,6 +33,11 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
 
         this.seriesDescriptionTextView = (TextView) findViewById(R.id.series_description);
         this.seriesFollowerCountTextView = (TextView) findViewById(R.id.series_follower_count);
+
+        this.seasonRecyclerView = (RecyclerView) findViewById(R.id.series_season_recyclerview);
+
+        this.seasonListAdapter = new SeasonListAdapter();
+        seasonRecyclerView.setAdapter(seasonListAdapter);
 
         Container container = ContainerLocator.locateComponent(this);
         SeriesRepository seriesRepository = container.getSeriesRepository();
@@ -53,7 +65,6 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
 
     @Override
     public void showSeriesDescription(String seriesDescription) {
-        //throw new NotImplementedError();
         this.seriesDescriptionTextView.setText(seriesDescription);
     }
 
@@ -64,8 +75,12 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
 
     @Override
     public void showFollowerCount(int followers) {
-        //throw new NotImplementedError();
         this.seriesFollowerCountTextView.setText("Followers: " + followers);
+    }
+
+    @Override
+    public void bindSeasons(final List<Season> seasonList) {
+        seasonListAdapter.update(seasonList);
     }
 
 }
