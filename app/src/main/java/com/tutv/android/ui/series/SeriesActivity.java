@@ -6,6 +6,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.tutv.android.R;
 import com.tutv.android.di.Container;
 import com.tutv.android.di.ContainerLocator;
@@ -20,6 +21,7 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
 
     private TextView seriesDescriptionTextView, seriesFollowerCountTextView;
     private RecyclerView seasonRecyclerView;
+    private CollapsingToolbarLayout seriesCollapsingToolbarLayout;
 
     private SeasonListAdapter seasonListAdapter;
 
@@ -33,9 +35,9 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
 
         this.seriesDescriptionTextView = (TextView) findViewById(R.id.series_description);
         this.seriesFollowerCountTextView = (TextView) findViewById(R.id.series_follower_count);
+        this.seriesCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.series_collapsing_toolbar);
 
         this.seasonRecyclerView = (RecyclerView) findViewById(R.id.series_season_recyclerview);
-
         this.seasonListAdapter = new SeasonListAdapter();
         seasonRecyclerView.setAdapter(seasonListAdapter);
 
@@ -60,7 +62,7 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
 
     @Override
     public void showSeriesName(String seriesName) {
-        //throw new NotImplementedError();
+        seriesCollapsingToolbarLayout.setTitle(seriesName);
     }
 
     @Override
