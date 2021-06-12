@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.tutv.android.ui.login.LoginActivity;
+import com.tutv.android.ui.series.SeriesActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -28,7 +29,12 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        startActivity(new Intent(this, LoginActivity.class));
+
+        //Changed for testing purposes
+        Intent intent = new Intent(this, SeriesActivity.class);
+        intent.putExtra("series_id", 70515);
+
+        startActivity(intent);
     }
 
 }

@@ -23,6 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.series.SeriesActivity"
+            android:launchMode="singleTask"
+            android:label="Series"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
