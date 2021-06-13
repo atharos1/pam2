@@ -1,5 +1,6 @@
 package com.tutv.android.datasource.retrofit.endpoint;
 
+import com.tutv.android.datasource.dto.ResourceFollowedDTO;
 import com.tutv.android.datasource.dto.ResourceViewedDTO;
 import com.tutv.android.domain.Episode;
 import com.tutv.android.domain.Series;
@@ -22,4 +23,6 @@ public interface SeriesAPI {
     @GET("series/{seriesId}/seasons/{seasonNumber}/episodes/{episodeNumber}")
     Single<Episode> getEpisode(@Path("seriesId") int seriesId, @Path("seasonNumber") int seasonNumber, @Path("episodeNumber") int numEpisode);
 
+    @PUT("series/{seriesId}")
+    Single<ResourceFollowedDTO> setFollowSeries(@Path("seriesId") int id, @Body ResourceFollowedDTO resourceFollowedDTO);
 }
