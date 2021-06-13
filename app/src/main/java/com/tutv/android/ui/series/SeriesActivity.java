@@ -54,7 +54,6 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
 
         Container container = ContainerLocator.locateComponent(this);
         SeriesRepository seriesRepository = container.getSeriesRepository();
-        UserRepository userRepository = container.getUserRepository();
         seriesPresenter = new SeriesPresenter(this, seriesId, seriesRepository);
     }
 
