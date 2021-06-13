@@ -34,6 +34,16 @@ public class Series {
 
     @Ignore List<Season> seasons;
 
+    private Boolean loggedInUserFollows;
+
+    public Boolean getLoggedInUserFollows() {
+        return loggedInUserFollows;
+    }
+
+    public void setLoggedInUserFollows(Boolean loggedInUserFollows) {
+        this.loggedInUserFollows = loggedInUserFollows;
+    }
+
     public String getName() {
         return name;
     }

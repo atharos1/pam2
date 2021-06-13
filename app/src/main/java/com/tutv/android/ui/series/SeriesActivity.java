@@ -12,8 +12,10 @@ import com.squareup.picasso.Picasso;
 import com.tutv.android.R;
 import com.tutv.android.di.Container;
 import com.tutv.android.di.ContainerLocator;
+import com.tutv.android.domain.Episode;
 import com.tutv.android.domain.Season;
 import com.tutv.android.repository.SeriesRepository;
+import com.tutv.android.repository.UserRepository;
 
 import java.util.List;
 
@@ -43,7 +45,7 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
         this.seriesNameTextView = (TextView) findViewById(R.id.series_name_textview);
 
         this.seasonRecyclerView = (RecyclerView) findViewById(R.id.series_season_recyclerview);
-        this.seasonListAdapter = new SeasonListAdapter();
+        this.seasonListAdapter = new SeasonListAdapter((Season s, Episode e) -> seriesPresenter.onEpisodeClicked(s, e));
         seasonRecyclerView.setAdapter(seasonListAdapter);
 
         if (getSupportActionBar() != null) {
@@ -52,6 +54,7 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
 
         Container container = ContainerLocator.locateComponent(this);
         SeriesRepository seriesRepository = container.getSeriesRepository();
+        UserRepository userRepository = container.getUserRepository();
         seriesPresenter = new SeriesPresenter(this, seriesId, seriesRepository);
     }
 

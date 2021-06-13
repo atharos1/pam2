@@ -3,6 +3,7 @@ package com.tutv.android.ui.series;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,10 +16,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 public class EpisodeListAdapter extends RecyclerView.Adapter<EpisodeListAdapter.ViewHolder> {
 
     private final List<Episode> episodeList;
+
+    private EpisodeClickListener episodeClickListener;
 
     public EpisodeListAdapter() {
         this.episodeList = new ArrayList<>();
@@ -46,6 +50,8 @@ public class EpisodeListAdapter extends RecyclerView.Adapter<EpisodeListAdapter.
     public void onBindViewHolder(@NonNull @NotNull ViewHolder holder, int position) {
         Episode episode = episodeList.get(position);
         holder.setEpisodeName(episode.getNumEpisode(), episode.getName());
+        holder.setViewed(episode.getLoggedInUserViewed() == null ? false : true);
+        holder.setListenerPropagation(() -> episodeClickListener.onClick(episode));
     }
 
     @Override
@@ -53,19 +59,37 @@ public class EpisodeListAdapter extends RecyclerView.Adapter<EpisodeListAdapter.
         return episodeList.size();
     }
 
+    public void setEpisodeClickedListener(EpisodeClickListener episodeClickListener) {
+        this.episodeClickListener = episodeClickListener;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView episodeNameTextView;
+        private ImageView viewedCheckmarkImageView;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
 
             episodeNameTextView = itemView.findViewById(R.id.episode_name);
+            viewedCheckmarkImageView = itemView.findViewById(R.id.viewed_checkmark);
         }
 
         public void setEpisodeName(int number, String name) {
             episodeNameTextView.setText(number + ". " + name);
         }
 
+        public void setViewed(boolean viewed) {
+            if(viewed) {
+                viewedCheckmarkImageView.setImageResource(R.drawable.ic_checkmark_green);
+                viewedCheckmarkImageView.setVisibility(View.VISIBLE);
+            } else {
+                viewedCheckmarkImageView.setVisibility(View.INVISIBLE);
+            }
+        }
+
+        public void setListenerPropagation(Callback c) {
+            episodeNameTextView.setOnClickListener(event -> c.call());
+        }
     }
 }

@@ -18,6 +18,16 @@ public class Episode {
     @ColumnInfo(name = "season_id")
     private int seasonId;
 
+    private Boolean loggedInUserViewed;
+
+    public Boolean getLoggedInUserViewed() {
+        return loggedInUserViewed;
+    }
+
+    public void setLoggedInUserViewed(Boolean loggedInUserViewed) {
+        this.loggedInUserViewed = loggedInUserViewed;
+    }
+
     public int getId() {
         return id;
     }
