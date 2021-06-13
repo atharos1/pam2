@@ -10,14 +10,23 @@ import com.tutv.android.domain.Episode;
 import com.tutv.android.domain.Season;
 import com.tutv.android.domain.Series;
 
+import java.util.List;
+
 import io.reactivex.Maybe;
 import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 
 @Dao
 public interface SeriesDao {
 
     @Query("SELECT * FROM series WHERE :id = series_id")
     Single<Series> getSeriesById(int id);
+
+    @Query("SELECT * FROM season WHERE :id = series_id")
+    Single<List<Season>> getSeasonsFromSeries(int id);
+
+    @Query("SELECT * FROM episode WHERE :id = season_id")
+    Single<List<Episode>> getEpisodesFromSeasons(int id);
 
     @Insert
     void insert(Series s);
@@ -52,4 +61,16 @@ public interface SeriesDao {
         }
     }
 
+    default Single<Series> getFullSeriesById(int id) {
+        return getSeriesById(id)
+        .observeOn(Schedulers.io())
+        .doOnSuccess(series -> {
+            List<Season> seasons = getSeasonsFromSeries(id).observeOn(Schedulers.io()).blockingGet();
+            series.setSeasons(seasons);
+            for(Season season : seasons) {
+                List<Episode> episodes = getEpisodesFromSeasons(season.getId()).blockingGet();
+                season.setEpisodes(episodes);
+            }
+        });
+    }
 }

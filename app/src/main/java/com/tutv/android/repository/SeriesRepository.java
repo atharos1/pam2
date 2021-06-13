@@ -26,10 +26,9 @@ public class SeriesRepository {
     }
 
     public Single<Series> getSeriesById(int id) {
-        return seriesDao.getSeriesById(id)
-                .observeOn(Schedulers.io())
-                .doOnError(throwable -> seriesAPI.getSeriesById(id)
-                                        .doOnSuccess(seriesDao::insertWholeSeries));
+        //return seriesAPI.getSeriesById(id);
+        return seriesDao.getFullSeriesById(id)
+                .onErrorResumeNext(throwable -> seriesAPI.getSeriesById(id));
     }
 
     public Single<Genre> getGenreById(int genreId) {
