@@ -20,6 +20,18 @@ public class Series {
     private String name;
     private String seriesDescription;
 
+    public String getBannerUrl() {
+        return bannerUrl;
+    }
+
+    private String bannerUrl;
+
+    public String getPosterUrl() {
+        return posterUrl;
+    }
+
+    private String posterUrl;
+
     @Ignore List<Season> seasons;
 
     public String getName() {
