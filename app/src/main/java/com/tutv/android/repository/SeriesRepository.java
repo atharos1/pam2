@@ -25,7 +25,9 @@ public class SeriesRepository {
     }
 
     public Single<Series> getSeriesById(int id) {
-        return seriesAPI.getSeriesById(id);
+        return seriesDao.getSeriesById(id)
+                .doOnError(throwable -> seriesAPI.getSeriesById(id)
+                                        .doOnSuccess(seriesDao::insertWholeSeries));
     }
 
     public Single<Genre> getGenreById(int genreId) {
@@ -35,7 +37,8 @@ public class SeriesRepository {
     public Single<Series> setEpisodeViewed(Series series, Season s, Episode e) {
         return seriesAPI.setSeriesViewed(series.getId(), s.getNumber(), e.getNumEpisode(), new ResourceViewedDTO(e.getLoggedInUserViewed() == null ? true : e.getLoggedInUserViewed() == false ? true : false))
                 .observeOn(Schedulers.io())
-                .flatMap(resourceViewedDTO -> seriesAPI.getSeriesById(series.getId()));
+                .flatMap(resourceViewedDTO -> seriesAPI.getSeriesById(series.getId()))
+                .doOnSuccess(seriesDao::insertWholeSeries);
     }
 
 }

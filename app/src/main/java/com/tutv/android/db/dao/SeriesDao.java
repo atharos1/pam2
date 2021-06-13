@@ -40,4 +40,16 @@ public interface SeriesDao {
     @Delete
     void remove(Series s);
 
+    default void insertWholeSeries(Series series) {
+        insert(series);
+        for(Season season : series.getSeasons()) {
+            season.setSeriesId(series.getId());
+            insert(season);
+            for(Episode episode : season.getEpisodes()) {
+                episode.setSeasonId(season.getId());
+                insert(episode);
+            }
+        }
+    }
+
 }
