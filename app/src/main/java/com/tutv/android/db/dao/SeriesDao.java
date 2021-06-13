@@ -17,7 +17,7 @@ import io.reactivex.Single;
 public interface SeriesDao {
 
     @Query("SELECT * FROM series WHERE :id = series_id")
-    Series getSeriesById(int id);
+    Single<Series> getSeriesById(int id);
 
     @Insert
     void insert(Series s);
