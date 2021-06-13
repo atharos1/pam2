@@ -73,4 +73,12 @@ public class Series {
     public void setSeasons(List<Season> seasons) {
         this.seasons = seasons;
     }
+
+    public void setBannerUrl(String bannerUrl) {
+        this.bannerUrl = bannerUrl;
+    }
+
+    public void setPosterUrl(String posterUrl) {
+        this.posterUrl = posterUrl;
+    }
 }

@@ -11,5 +11,6 @@ public interface SeriesView {
     void showUserFollows(boolean follows);
     void showFollowerCount(int followers);
     void bindSeasons(final List<Season> seasonList);
+    void showSeriesBanner(String bannerUrl);
 
 }

@@ -39,6 +39,7 @@ public class SeriesPresenter {
             actualView.showUserFollows(false);
             actualView.showFollowerCount(series.getFollowers());
             actualView.bindSeasons(series.getSeasons());
+            actualView.showSeriesBanner(series.getBannerUrl());
         }
     }
 
