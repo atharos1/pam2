@@ -104,4 +104,9 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
                 .into(seriesBannerImageView);
     }
 
+    @Override
+    public void bindSeason(Season season) {
+        seasonListAdapter.updateSeason(season);
+    }
+
 }

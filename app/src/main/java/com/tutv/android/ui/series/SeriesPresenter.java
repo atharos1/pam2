@@ -61,13 +61,14 @@ public class SeriesPresenter {
             .subscribe(series -> {
                 SeriesView view = seriesView.get();
                 if(view != null) {
-                    view.bindSeasons(series.getSeasons());
+                    for(Season season : series.getSeasons()) {
+                        if(season.getNumber() == s.getNumber()) {
+                            view.bindSeason(season);
+                            break;
+                        }
+                    }
                 }
             }, this::onSeriesUpdatedError);
-    }
-
-    private void onSeriesUpdated(Series series) {
-
     }
 
     private void onSeriesUpdatedError(Throwable throwable) {

@@ -64,6 +64,17 @@ public class SeasonListAdapter extends RecyclerView.Adapter<SeasonListAdapter.Vi
         return seasonList.size();
     }
 
+    public void updateSeason(Season season) {
+        for(int i = 0; i < seasonList.size(); i++) {
+            if(seasonList.get(i).getNumber() == season.getNumber()) {
+                seasonList.set(i, season);
+                break;
+            }
+        }
+
+        notifyDataSetChanged();
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView seasonNumberTextView;

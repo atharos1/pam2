@@ -9,8 +9,6 @@ import com.tutv.android.domain.Genre;
 import com.tutv.android.domain.Season;
 import com.tutv.android.domain.Series;
 
-import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
