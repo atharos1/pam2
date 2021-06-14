@@ -17,6 +17,7 @@ import io.reactivex.processors.PublishProcessor;
 
 public class TvPosterListPresenter {
     private final int genreId;
+    private final String genreName;
     private final WeakReference<TvPosterListView> view;
     private final List<Series> seriesList;
     private final PublishProcessor<Integer> mPublishProcessor;
@@ -28,9 +29,10 @@ public class TvPosterListPresenter {
     private boolean loading = true;
 
 
-    public TvPosterListPresenter(TvPosterListView view, int genreId, SeriesRepository seriesRepository) {
+    public TvPosterListPresenter(TvPosterListView view, int genreId, String genreName, SeriesRepository seriesRepository) {
         this.view = new WeakReference<>(view);
         this.genreId = genreId;
+        this.genreName = genreName;
         this.seriesRepository = seriesRepository;
         this.mPublishProcessor = PublishProcessor.create();
         this.seriesList = new ArrayList<>();
@@ -40,6 +42,11 @@ public class TvPosterListPresenter {
 
     public void onViewAttached() {
         initObservable();
+
+        TvPosterListView actualView = view.get();
+        if(actualView != null) {
+            actualView.setListName(this.genreName);
+        }
     }
 
     public void onViewDetached() {
@@ -61,7 +68,7 @@ public class TvPosterListPresenter {
                         .doOnNext(page -> {
                             TvPosterListView actualView = view.get();
                             loading = true;
-                            if(actualView != null) {
+                            if(actualView != null && seriesList.size() > 0) {
                                 actualView.setLoadingStatus(true);
                             }
                         })
@@ -78,8 +85,9 @@ public class TvPosterListPresenter {
         TvPosterListView actualView = view.get();
         loading = false;
         if(actualView != null) {
-            actualView.setListName(genre.getName());
             actualView.setLoadingStatus(false);
+            if (genre.getSeries().size() == 0)
+                actualView.finishLoading();
         }
     }
 

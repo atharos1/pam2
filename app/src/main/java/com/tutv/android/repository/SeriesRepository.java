@@ -28,10 +28,10 @@ public class SeriesRepository {
     }
 
     public Single<Genre> getGenreById(int genreId, int page) {
-        return genreAPI.getById(genreId, 10, page).subscribeOn(Schedulers.io());
+        return genreAPI.getById(genreId, 6, page).subscribeOn(Schedulers.io());
     }
 
     public Single<List<Series>> getSeriesSearch(String name, int page, Integer genre, Integer network) {
-        return seriesAPI.getSeriesSearch(name, 10, page, genre, network).subscribeOn(Schedulers.io());
+        return seriesAPI.getSeriesSearch(name, 18, page, genre, network).subscribeOn(Schedulers.io());
     }
 }

@@ -15,24 +15,24 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import androidx.appcompat.widget.SearchView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.tutv.android.R;
 import com.tutv.android.domain.Genre;
 import com.tutv.android.domain.Network;
 import com.tutv.android.ui.tv_poster_list.TvPosterListComponent;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends AppCompatActivity implements SearchView {
+public class SearchActivity extends AppCompatActivity implements com.tutv.android.ui.search.SearchView {
     private SearchPresenter presenter;
 
     private ProgressBar searchProgressBar;
     private AlertDialog filterDialog;
     private View filterView;
+    private MenuItem searchItem;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,13 +45,12 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
         //setFilters(new ArrayList<>(), new ArrayList<>());
 
         LinearLayout layout = findViewById(R.id.search_layout);
-        TvPosterListComponent tvl = new TvPosterListComponent(layout.getContext(), null);
+        TvPosterListComponent tvl = new TvPosterListComponent(layout.getContext(), null,
+                10759, "Action and adventure");
         tvl.build();
         layout.addView(tvl);
 
-        presenter = new SearchPresenter();
-
-        handleIntent(getIntent());
+        presenter = new SearchPresenter(this);
     }
 
     @Override
@@ -63,7 +62,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            //ToDo: Buscar
+            presenter.performSearch(query);
         }
     }
 
@@ -74,15 +73,11 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
         // getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.actionAndStatusBar)));
 
         MenuItem searchItem = menu.findItem(R.id.search_button);
-        androidx.appcompat.widget.SearchView searchView = (androidx.appcompat.widget.SearchView) searchItem.getActionView();
+        SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setQueryHint(getString(R.string.search_hint));
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        /* searchViewModel.getSearchQuery().observe(this, value -> {
-            searchItem.expandActionView();
-            searchView.setQuery(value, false);
-            searchView.clearFocus();
-        }); */
+
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
@@ -95,6 +90,10 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
                 return false;
             }
         });
+
+        this.searchItem = searchItem;
+
+        handleIntent(getIntent());
 
         return true;
     }
@@ -120,6 +119,14 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
         super.onStop();
 
         presenter.onViewDetached();
+    }
+
+    @Override
+    public void setSearchQuery(String searchQuery) {
+        this.searchItem.expandActionView();
+        SearchView searchView = (SearchView) this.searchItem.getActionView();
+        searchView.setQuery(searchQuery, false);
+        searchView.clearFocus();
     }
 
     @Override

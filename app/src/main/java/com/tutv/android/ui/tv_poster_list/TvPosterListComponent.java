@@ -30,16 +30,17 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
     private ProgressBar progressBar;
     private ProgressBar scrollProgressBar;
 
-    private final Context context;
     private boolean buildFinished = false;
     private TvPosterListPresenter presenter;
 
-    public TvPosterListComponent(Context context, @Nullable AttributeSet attrs) {
+    public TvPosterListComponent(Context context, @Nullable AttributeSet attrs, int genreId, String genreName) {
         super(context, attrs);
 
-        this.context = context;
-
         LayoutInflater.from(context).inflate(R.layout.tv_poster_list, this, true);
+
+        Container container = ContainerLocator.locateComponent(context);
+        SeriesRepository seriesRepository = container.getSeriesRepository();
+        presenter = new TvPosterListPresenter(this, genreId, genreName, seriesRepository);
     }
 
     @Override
@@ -61,10 +62,6 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
         this.scrollProgressBar = findViewById(R.id.tv_poster_scroll_progressbar);
 
         listRecycleView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-
-        Container container = ContainerLocator.locateComponent(context);
-        final SeriesRepository seriesRepository = container.getSeriesRepository();
-        presenter = new TvPosterListPresenter(this, 16, seriesRepository);
 
         listRecycleView.setAdapter(new TvPosterListAdapter(presenter, getContext()));
         addOnScrollListener(listRecycleView);
@@ -92,11 +89,19 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
     @Override
     public void setLoadingStatus(boolean status) {
         if(status)
-            progressBar.setVisibility(View.VISIBLE);
+            scrollProgressBar.setVisibility(View.VISIBLE);
         else {
             listRecycleView.getAdapter().notifyDataSetChanged();
             progressBar.setVisibility(View.GONE);
+            scrollProgressBar.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void finishLoading() {
+        listRecycleView.clearOnScrollListeners();
+        scrollProgressBar.setVisibility(View.GONE);
+        listRecycleView.setPadding(0, listRecycleView.getPaddingTop(), 0, 0);
     }
 
     private void addOnScrollListener(RecyclerView recycleView) {
