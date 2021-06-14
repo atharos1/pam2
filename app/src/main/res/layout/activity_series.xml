@@ -7,7 +7,8 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="280dp"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:id="@+id/series_app_bar">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
@@ -46,6 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
+        android:layout_marginTop="30dp"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <RelativeLayout
@@ -73,5 +75,18 @@
         </RelativeLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:baselineAlignBottom="false"
+        android:clickable="true"
+        android:src="@drawable/ic_star_empty"
+        android:scaleType="center"
+        app:layout_anchor="@id/series_app_bar"
+        app:layout_anchorGravity="end|bottom"
+        android:layout_marginRight="30dp"
+        android:id="@+id/follow_series_button"
+        />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

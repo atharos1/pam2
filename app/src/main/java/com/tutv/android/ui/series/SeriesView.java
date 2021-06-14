@@ -14,5 +14,6 @@ public interface SeriesView {
     void bindSeasons(final List<Season> seasonList);
     void showSeriesBanner(String bannerUrl);
     void bindSeason(Season season);
+    void showSeriesFollowed(boolean followed);
 
 }

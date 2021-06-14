@@ -3,11 +3,13 @@ package com.tutv.android.ui.series;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 import com.tutv.android.R;
 import com.tutv.android.di.Container;
@@ -25,6 +27,7 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
 
     private TextView seriesNameTextView, seriesDescriptionTextView, seriesFollowerCountTextView;
     private ImageView seriesBannerImageView;
+    private FloatingActionButton floatingActionButton;
     private RecyclerView seasonRecyclerView;
     private CollapsingToolbarLayout seriesCollapsingToolbarLayout;
 
@@ -43,6 +46,9 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
         this.seriesCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.series_collapsing_toolbar);
         this.seriesBannerImageView = (ImageView) findViewById(R.id.series_banner_imageview);
         this.seriesNameTextView = (TextView) findViewById(R.id.series_name_textview);
+        this.floatingActionButton = (FloatingActionButton) findViewById(R.id.follow_series_button);
+
+        floatingActionButton.setOnClickListener(event -> seriesPresenter.onSeriesFollowClicked());
 
         this.seasonRecyclerView = (RecyclerView) findViewById(R.id.series_season_recyclerview);
         this.seasonListAdapter = new SeasonListAdapter((Season s, Episode e) -> seriesPresenter.onEpisodeClicked(s, e));
@@ -106,6 +112,15 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
     @Override
     public void bindSeason(Season season) {
         seasonListAdapter.updateSeason(season);
+    }
+
+    @Override
+    public void showSeriesFollowed(boolean followed) {
+        if(followed) {
+            floatingActionButton.setImageResource(R.drawable.ic_star_filled);
+        } else {
+            floatingActionButton.setImageResource(R.drawable.ic_star_empty);
+        }
     }
 
 }

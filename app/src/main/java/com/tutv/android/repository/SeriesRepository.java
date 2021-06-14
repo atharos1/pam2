@@ -1,6 +1,6 @@
 package com.tutv.android.repository;
 
-import com.tutv.android.datasource.dto.ResourceFollowedDTO;
+import com.tutv.android.datasource.dto.SeriesFollowedDTO;
 import com.tutv.android.datasource.dto.ResourceViewedDTO;
 import com.tutv.android.datasource.retrofit.endpoint.GenreAPI;
 import com.tutv.android.datasource.retrofit.endpoint.SeriesAPI;
@@ -18,15 +18,16 @@ public class SeriesRepository {
     private final SeriesDao seriesDao;
     private final SeriesAPI seriesAPI;
     private final GenreAPI genreAPI;
+    private final UserRepository userRepository;
 
-    public SeriesRepository(SeriesDao seriesDao, SeriesAPI seriesAPI, GenreAPI genreAPI) {
+    public SeriesRepository(SeriesDao seriesDao, SeriesAPI seriesAPI, GenreAPI genreAPI, UserRepository userRepository) {
         this.seriesDao = seriesDao;
         this.seriesAPI = seriesAPI;
         this.genreAPI = genreAPI;
+        this.userRepository = userRepository;
     }
 
     public Single<Series> getSeriesById(int id) {
-        //return seriesAPI.getSeriesById(id);
         return seriesDao.getFullSeriesById(id)
                 .onErrorResumeNext(throwable -> seriesAPI.getSeriesById(id));
     }
@@ -37,16 +38,33 @@ public class SeriesRepository {
 
     public Single<Series> setEpisodeViewed(Series series, Season s, Episode e) {
         return seriesAPI.setSeriesViewed(series.getId(), s.getNumber(), e.getNumEpisode(), new ResourceViewedDTO(e.getLoggedInUserViewed() == null ? true : e.getLoggedInUserViewed() == false ? true : false))
-                .observeOn(Schedulers.io())
-                .flatMap(resourceViewedDTO -> seriesAPI.getSeriesById(series.getId()))
-                .doOnSuccess(seriesDao::insertWholeSeries);
+                .flatMap(resourceViewedDTO -> {
+                    e.setLoggedInUserViewed(resourceViewedDTO.isViewedByUser());
+                    seriesDao.update(e);
+                    return Single.just(series);
+                });
     }
 
     public Single<Series> setFollowSeries(Series series) {
-        return seriesAPI.setFollowSeries(series.getId(), new ResourceFollowedDTO(series.getLoggedInUserFollows() == null ? true : series.getLoggedInUserFollows() == false ? true : false))
-                .observeOn(Schedulers.io())
-                .flatMap(resourceFollowedDTO -> seriesAPI.getSeriesById(series.getId()))
-                .doOnSuccess(seriesDao::insert);
+         return userRepository.getCurrentUser()
+                .flatMap(user -> seriesAPI.setFollowSeries(user.getId(), new SeriesFollowedDTO(series.getId())))
+                .flatMap(seriesFollowedResponseDTO -> {
+                    series.setLoggedInUserFollows(seriesFollowedResponseDTO.getLoggedInUserFollows());
+                    series.setFollowers(seriesFollowedResponseDTO.getFollowers());
+                    seriesDao.insert(series);
+                    return Single.just(series);
+                });
+    }
+
+    public Single<Series> unfollowSeries(Series series) {
+        return userRepository.getCurrentUser()
+                .flatMap(user -> seriesAPI.setUnfollowSeries(user.getId(), series.getId()))
+                .flatMap(seriesFollowedResponseDTO -> {
+                    series.setLoggedInUserFollows(seriesFollowedResponseDTO.getLoggedInUserFollows());
+                    series.setFollowers(seriesFollowedResponseDTO.getFollowers());
+                    seriesDao.insert(series);
+                    return Single.just(series);
+                });
     }
 
 }

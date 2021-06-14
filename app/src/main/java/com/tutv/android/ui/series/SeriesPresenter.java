@@ -1,16 +1,15 @@
 package com.tutv.android.ui.series;
 
-import android.widget.Toast;
+
+import android.annotation.SuppressLint;
 
 import com.tutv.android.domain.Episode;
 import com.tutv.android.domain.Season;
 import com.tutv.android.domain.Series;
 import com.tutv.android.repository.SeriesRepository;
-import com.tutv.android.repository.UserRepository;
 
 import java.lang.ref.WeakReference;
 
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -51,8 +50,7 @@ public class SeriesPresenter {
     }
 
     private void onSeriesLoadError(final Throwable e) {
-        //Todo: properly handle an error
-        System.out.println("AAAaaaaah");
+
     }
 
     public void onEpisodeClicked(Season s, Episode e) {
@@ -73,5 +71,44 @@ public class SeriesPresenter {
 
     private void onSeriesUpdatedError(Throwable throwable) {
 
+    }
+
+    public void onSeriesFollowClicked() {
+        if(series.getLoggedInUserFollows() != null) {
+            if(series.getLoggedInUserFollows()) {
+                seriesRepository.setFollowSeries(series)
+                        .observeOn(Schedulers.io())
+                        .doOnSuccess(this::onSeriesFollowed)
+                        .doOnError(this::onSeriesFollowedError);
+            } else {
+                seriesRepository.unfollowSeries(series)
+                        .observeOn(Schedulers.io())
+                        .doOnSuccess(this::onSeriesUnfollowed)
+                        .doOnError(this::onSeriesUnfollowedError);
+            }
+        }
+    }
+
+    private void onSeriesUnfollowedError(Throwable throwable) {
+    }
+
+    private void onSeriesUnfollowed(Series series) {
+        SeriesView view = seriesView.get();
+        if(view != null) {
+            view.showUserFollows(false);
+            view.showFollowerCount(series.getFollowers());
+        }
+    }
+
+    private void onSeriesFollowedError(Throwable throwable) {
+
+    }
+
+    private void onSeriesFollowed(Series series) {
+        SeriesView view = seriesView.get();
+        if(view != null) {
+            view.showFollowerCount(series.getFollowers());
+            view.showSeriesFollowed(series.getLoggedInUserFollows());
+        }
     }
 }
