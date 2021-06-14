@@ -123,4 +123,9 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
         }
     }
 
+    @Override
+    public void showError(String error) {
+        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+    }
+
 }

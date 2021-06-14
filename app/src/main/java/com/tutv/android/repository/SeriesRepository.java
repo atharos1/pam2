@@ -38,6 +38,7 @@ public class SeriesRepository {
 
     public Single<Series> setEpisodeViewed(Series series, Season s, Episode e) {
         return seriesAPI.setSeriesViewed(series.getId(), s.getNumber(), e.getNumEpisode(), new ResourceViewedDTO(e.getLoggedInUserViewed() == null ? true : e.getLoggedInUserViewed() == false ? true : false))
+                .subscribeOn(Schedulers.io())
                 .flatMap(resourceViewedDTO -> {
                     e.setLoggedInUserViewed(resourceViewedDTO.isViewedByUser());
                     seriesDao.update(e);
@@ -47,6 +48,7 @@ public class SeriesRepository {
 
     public Single<Series> setFollowSeries(Series series) {
          return userRepository.getCurrentUser()
+                 .subscribeOn(Schedulers.io())
                 .flatMap(user -> seriesAPI.setFollowSeries(user.getId(), new SeriesFollowedDTO(series.getId())))
                 .flatMap(seriesFollowedResponseDTO -> {
                     series.setLoggedInUserFollows(seriesFollowedResponseDTO.getLoggedInUserFollows());
@@ -58,6 +60,7 @@ public class SeriesRepository {
 
     public Single<Series> unfollowSeries(Series series) {
         return userRepository.getCurrentUser()
+                .subscribeOn(Schedulers.io())
                 .flatMap(user -> seriesAPI.setUnfollowSeries(user.getId(), series.getId()))
                 .flatMap(seriesFollowedResponseDTO -> {
                     series.setLoggedInUserFollows(seriesFollowedResponseDTO.getLoggedInUserFollows());

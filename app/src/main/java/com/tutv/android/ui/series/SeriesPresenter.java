@@ -9,7 +9,9 @@ import com.tutv.android.domain.Series;
 import com.tutv.android.repository.SeriesRepository;
 
 import java.lang.ref.WeakReference;
+import java.nio.file.Path;
 
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -50,39 +52,51 @@ public class SeriesPresenter {
     }
 
     private void onSeriesLoadError(final Throwable e) {
-
+        SeriesView view = seriesView.get();
+        if(view != null) {
+            view.showError("Error al cargar la serie :(");
+        }
     }
 
     public void onEpisodeClicked(Season s, Episode e) {
         seriesRepository.setEpisodeViewed(series, s, e)
-            .observeOn(Schedulers.io())
-            .subscribe(series -> {
-                SeriesView view = seriesView.get();
-                if(view != null) {
-                    for(Season season : series.getSeasons()) {
-                        if(season.getNumber() == s.getNumber()) {
-                            view.bindSeason(season);
-                            break;
-                        }
+            .observeOn(Schedulers.computation())
+            .flatMap(series -> {
+                for(Season season : series.getSeasons()) {
+                    if(season.getNumber() == s.getNumber()) {
+                        return Single.just(s);
                     }
                 }
-            }, this::onSeriesUpdatedError);
+                return Single.error(new Throwable());
+            })
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(this::onEpisodeViewed, this::onEpisodeViewedError);
     }
 
-    private void onSeriesUpdatedError(Throwable throwable) {
+    private void onEpisodeViewedError(Throwable throwable) {
+        SeriesView view = seriesView.get();
+        if (view != null) {
+            view.showError("Error al ver el episodio :(");
+        }
+    }
 
+    private void onEpisodeViewed(Season season) {
+        SeriesView view = seriesView.get();
+        if(view != null) {
+            view.bindSeason(season);
+        }
     }
 
     public void onSeriesFollowClicked() {
         if(series.getLoggedInUserFollows() != null) {
             if(series.getLoggedInUserFollows()) {
                 seriesRepository.setFollowSeries(series)
-                        .observeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
                         .doOnSuccess(this::onSeriesFollowed)
                         .doOnError(this::onSeriesFollowedError);
             } else {
                 seriesRepository.unfollowSeries(series)
-                        .observeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
                         .doOnSuccess(this::onSeriesUnfollowed)
                         .doOnError(this::onSeriesUnfollowedError);
             }
@@ -90,6 +104,10 @@ public class SeriesPresenter {
     }
 
     private void onSeriesUnfollowedError(Throwable throwable) {
+        SeriesView view = seriesView.get();
+        if(view != null) {
+            view.showError("Error al dejar de seguir la serie :(");
+        }
     }
 
     private void onSeriesUnfollowed(Series series) {
@@ -101,7 +119,10 @@ public class SeriesPresenter {
     }
 
     private void onSeriesFollowedError(Throwable throwable) {
-
+        SeriesView view = seriesView.get();
+        if(view != null) {
+            view.showError("Error al dejar seguir la serie :(");
+        }
     }
 
     private void onSeriesFollowed(Series series) {
