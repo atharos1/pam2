@@ -1,5 +1,6 @@
 package com.tutv.android.ui.tv_poster_list;
 
+import com.tutv.android.domain.Genre;
 import com.tutv.android.domain.Series;
 import com.tutv.android.repository.SeriesRepository;
 import com.tutv.android.ui.series.SeriesView;
@@ -10,17 +11,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.processors.PublishProcessor;
 
 public class TvPosterListPresenter {
     private final int genreId;
     private final WeakReference<TvPosterListView> view;
-    private List<Series> seriesList;
-    private PublishProcessor<Integer> mPublishProcessor;
+    private final List<Series> seriesList;
+    private final PublishProcessor<Integer> mPublishProcessor;
+    private final SeriesRepository seriesRepository;
+
+    private final CompositeDisposable disposables;
+
     private int pageNumber = 1;
-    private SeriesRepository seriesRepository;
     private boolean loading = true;
+
 
     public TvPosterListPresenter(TvPosterListView view, int genreId, SeriesRepository seriesRepository) {
         this.view = new WeakReference<>(view);
@@ -29,7 +35,15 @@ public class TvPosterListPresenter {
         this.mPublishProcessor = PublishProcessor.create();
         this.seriesList = new ArrayList<>();
 
+        disposables = new CompositeDisposable();
+    }
+
+    public void onViewAttached() {
         initObservable();
+    }
+
+    public void onViewDetached() {
+        disposables.dispose();
     }
 
     public void onBindRepositoryRowViewAtPosition(int position, TvPosterView tvPosterView) {
@@ -53,18 +67,24 @@ public class TvPosterListPresenter {
                         })
                         .concatMapSingle(page -> seriesRepository.getGenreById(genreId, page))
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(genre -> {
-                            seriesList.addAll(genre.getSeries());
-                            System.out.println("asds");
-                            TvPosterListView actualView = view.get();
-                            loading = false;
-                            if(actualView != null) {
-                                actualView.setLoadingStatus(false);
-                            }
-                        });
+                        .subscribe(this::onGenreLoad, this::onGenreLoadError);
 
-        // disposables.add(disposable);
+        disposables.add(disposable);
         mPublishProcessor.onNext(pageNumber);
+    }
+
+    private void onGenreLoad(Genre genre) {
+        seriesList.addAll(genre.getSeries());
+        TvPosterListView actualView = view.get();
+        loading = false;
+        if(actualView != null) {
+            actualView.setListName(genre.getName());
+            actualView.setLoadingStatus(false);
+        }
+    }
+
+    private void onGenreLoadError(final Throwable e) {
+        // ToDo: Mensaje de error
     }
 
     public void getNextPage() {
@@ -73,4 +93,5 @@ public class TvPosterListPresenter {
             mPublishProcessor.onNext(pageNumber);
         }
     }
+
 }

@@ -71,6 +71,25 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
     }
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        presenter.onViewAttached();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        presenter.onViewDetached();
+    }
+
+    @Override
+    public void setListName(String listName) {
+        this.listName.setText(listName);
+    }
+
+    @Override
     public void setLoadingStatus(boolean status) {
         if(status)
             progressBar.setVisibility(View.VISIBLE);

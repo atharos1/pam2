@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -43,10 +44,10 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
         filterDialog = createDialog();
         //setFilters(new ArrayList<>(), new ArrayList<>());
 
-        ConstraintLayout constraintLayout = findViewById(R.id.search_layout);
-        TvPosterListComponent tvl = new TvPosterListComponent(constraintLayout.getContext(), null);
+        LinearLayout layout = findViewById(R.id.search_layout);
+        TvPosterListComponent tvl = new TvPosterListComponent(layout.getContext(), null);
         tvl.build();
-        constraintLayout.addView(tvl);
+        layout.addView(tvl);
 
         presenter = new SearchPresenter();
 
@@ -141,7 +142,9 @@ public class SearchActivity extends AppCompatActivity implements SearchView {
         mBuilder.setPositiveButton("Ok", (dialog, which) -> {
             Genre g = (Genre) gSpinner.getSelectedItem();
             Network n = (Network) nSpinner.getSelectedItem();
-            // ToDo: applyFilters(g.getId(), n.getId());
+            if (g != null && n != null) {
+                // ToDo: applyFilters(g.getId(), n.getId());
+            }
         });
 
         mBuilder.setView(mView);
