@@ -92,13 +92,16 @@ public class SeriesPresenter {
             if(series.getLoggedInUserFollows()) {
                 seriesRepository.setFollowSeries(series)
                         .observeOn(AndroidSchedulers.mainThread())
-                        .doOnSuccess(this::onSeriesFollowed)
-                        .doOnError(this::onSeriesFollowedError);
+                        .subscribe(this::onSeriesFollowed, this::onSeriesFollowedError);
             } else {
                 seriesRepository.unfollowSeries(series)
                         .observeOn(AndroidSchedulers.mainThread())
-                        .doOnSuccess(this::onSeriesUnfollowed)
-                        .doOnError(this::onSeriesUnfollowedError);
+                        .subscribe(this::onSeriesUnfollowed, this::onSeriesUnfollowedError);
+            }
+        } else {
+            SeriesView view = seriesView.get();
+            if(view != null) {
+                view.showError("Asegurate de loguearte primero :)");
             }
         }
     }
