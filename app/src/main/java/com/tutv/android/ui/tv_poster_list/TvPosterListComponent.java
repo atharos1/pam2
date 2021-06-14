@@ -16,7 +16,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tutv.android.R;
+import com.tutv.android.di.Container;
+import com.tutv.android.di.ContainerLocator;
 import com.tutv.android.domain.Series;
+import com.tutv.android.repository.SeriesRepository;
+import com.tutv.android.repository.UserRepository;
 
 import java.util.List;
 
@@ -42,6 +46,10 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
     protected void onFinishInflate() {
         super.onFinishInflate();
 
+        build();
+    }
+
+    public void build() {
         if(buildFinished)
             return;
 
@@ -54,8 +62,38 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
 
         listRecycleView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        presenter = new TvPosterListPresenter(this, "drama");
+        Container container = ContainerLocator.locateComponent(context);
+        final SeriesRepository seriesRepository = container.getSeriesRepository();
+        presenter = new TvPosterListPresenter(this, 16, seriesRepository);
 
         listRecycleView.setAdapter(new TvPosterListAdapter(presenter, getContext()));
+        addOnScrollListener(listRecycleView);
+    }
+
+    @Override
+    public void setLoadingStatus(boolean status) {
+        if(status)
+            progressBar.setVisibility(View.VISIBLE);
+        else {
+            listRecycleView.getAdapter().notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
+        }
+    }
+
+    private void addOnScrollListener(RecyclerView recycleView) {
+        LinearLayoutManager mLayoutManager = (LinearLayoutManager) recycleView.getLayoutManager();
+
+        recycleView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                int visibleItemCount = mLayoutManager.getChildCount();
+                int totalItemCount = mLayoutManager.getItemCount();
+                int pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
+
+                if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                    presenter.getNextPage();
+                }
+            }
+        });
     }
 }

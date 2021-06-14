@@ -55,7 +55,7 @@ public class TvPosterComponent extends RecyclerView.ViewHolder implements TvPost
 
     @Override
     public TvPosterPresenter getPresenter() {
-        return null;
+        return presenter;
     }
 
     public void navigateToSeriesPage(int seriesId) {

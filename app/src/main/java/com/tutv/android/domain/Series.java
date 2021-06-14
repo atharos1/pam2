@@ -24,7 +24,15 @@ public class Series {
         return bannerUrl;
     }
 
+    public void setBannerUrl(String bannerUrl) {
+        this.bannerUrl = bannerUrl;
+    }
+
     private String bannerUrl;
+
+    public void setPosterUrl(String posterUrl) {
+        this.posterUrl = posterUrl;
+    }
 
     public String getPosterUrl() {
         return posterUrl;

@@ -6,7 +6,10 @@ import com.tutv.android.db.dao.SeriesDao;
 import com.tutv.android.domain.Genre;
 import com.tutv.android.domain.Series;
 
+import java.util.List;
+
 import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 
 public class SeriesRepository {
 
@@ -24,7 +27,11 @@ public class SeriesRepository {
         return seriesAPI.getSeriesById(id);
     }
 
-    public Single<Genre> getGenreById(int genreId) {
-        return genreAPI.getById(genreId, 10, 1);
+    public Single<Genre> getGenreById(int genreId, int page) {
+        return genreAPI.getById(genreId, 10, page).subscribeOn(Schedulers.io());
+    }
+
+    public Single<List<Series>> getSeriesSearch(String name, int page, Integer genre, Integer network) {
+        return seriesAPI.getSeriesSearch(name, 10, page, genre, network).subscribeOn(Schedulers.io());
     }
 }
