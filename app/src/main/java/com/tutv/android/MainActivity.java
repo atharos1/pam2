@@ -35,14 +35,6 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
-
-
-        //Changed for testing purposes
-        Intent intent = new Intent(this, SeriesActivity.class);
-        intent.putExtra("series_id", 66732);
-
-        startActivity(intent);
-        //startActivity(new Intent(this, LoginActivity.class));
     }
 
     @Override
@@ -70,8 +62,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        //getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.actionAndStatusBar)));
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.actionAndStatusBar)));
 
         return true;
+    }
+
+    public void menuLoginButton_clicked(MenuItem item) {
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(intent);
     }
 }

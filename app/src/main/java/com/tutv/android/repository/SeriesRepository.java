@@ -47,6 +47,10 @@ public class SeriesRepository {
         return seriesAPI.getSeriesSearch(name, 18, page, genre, network).subscribeOn(Schedulers.io());
     }
 
+    public Single<List<Series>> getFeatured() {
+        return seriesAPI.getFeatured();
+    }
+
     public Single<List<Genre>> getGenres() {
         return genreAPI.getAll();
     }
@@ -55,6 +59,7 @@ public class SeriesRepository {
         return networksAPI.getAll();
     }
 
+    //TODO porque carga en io? Eos bloquea la UI
     public Single<Series> setEpisodeViewed(Series series, Season s, Episode e) {
         return seriesAPI.setSeriesViewed(series.getId(), s.getNumber(), e.getNumEpisode(), new ResourceViewedDTO(e.getLoggedInUserViewed() == null ? true : e.getLoggedInUserViewed() == false ? true : false))
                 .subscribeOn(Schedulers.io())
@@ -88,5 +93,7 @@ public class SeriesRepository {
                     return Single.just(series);
                 });
     }
+
+
 
 }

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -121,6 +122,7 @@ public class SearchActivity extends AppCompatActivity implements com.tutv.androi
         presenter.onViewDetached();
     }
 
+    //TODO recreas el componente cada vez?
     @Override
     public void setSearchQuery(String searchQuery, Integer genre, Integer network) {
         this.searchItem.expandActionView();
@@ -131,6 +133,18 @@ public class SearchActivity extends AppCompatActivity implements com.tutv.androi
         TvPosterListComponent tvl = new TvPosterListComponent(layout.getContext(), null,
                 searchQuery, genre, network);
         tvl.build();
+
+        /*TypedValue tv = new TypedValue();
+        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
+        {
+            int actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+
+            int statusBarHeightId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+            int statusBarHeight = getResources().getDimensionPixelSize(statusBarHeightId);
+            tvl.setPadding(0, tvl.getPaddingTop() +
+                    statusBarHeight + actionBarHeight, 0, 0);
+        }*/
+
         layout.removeAllViews();
         layout.addView(tvl);
     }

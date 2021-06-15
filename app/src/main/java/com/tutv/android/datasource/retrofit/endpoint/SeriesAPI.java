@@ -9,6 +9,7 @@ import com.tutv.android.domain.Series;
 import java.util.List;
 
 import io.reactivex.Single;
+import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -37,4 +38,7 @@ public interface SeriesAPI {
 
     @DELETE("/users/{userId}/following/{seriesId}")
     Single<SeriesFollowedResponseDTO> setUnfollowSeries(@Path("userId") int userId, @Path("seriesId") int seriesId);
+
+    @GET("series/featured")
+    Single<List<Series>> getFeatured();
 }

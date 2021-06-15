@@ -1,6 +1,7 @@
 package com.tutv.android.ui.tv_poster_list;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -104,6 +105,7 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
         if (listName == null) {
             this.listName.setVisibility(View.GONE);
         } else {
+            this.listName.setVisibility(View.VISIBLE);
             this.listName.setText(listName);
         }
     }
