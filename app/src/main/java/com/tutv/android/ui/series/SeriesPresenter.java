@@ -16,10 +16,10 @@ public class SeriesPresenter {
     private final WeakReference<SeriesView> seriesView;
 
     private final SeriesRepository seriesRepository;
+    private final BaseSchedulerProvider schedulerProvider;
     private final int seriesId;
     private Series series;
 
-    private final BaseSchedulerProvider schedulerProvider;
 
     private final CompositeDisposable disposables;
 
@@ -95,13 +95,13 @@ public class SeriesPresenter {
 
     public void onSeriesFollowClicked() {
         if(series.getLoggedInUserFollows() == null || !series.getLoggedInUserFollows()) {
-            seriesRepository.setFollowSeries(series)
+            disposables.add(seriesRepository.setFollowSeries(series)
                     .observeOn(schedulerProvider.ui())
-                    .subscribe(this::onSeriesFollowed, this::onSeriesFollowedError);
+                    .subscribe(this::onSeriesFollowed, this::onSeriesFollowedError));
         } else {
-            seriesRepository.unfollowSeries(series)
+            disposables.add(seriesRepository.unfollowSeries(series)
                     .observeOn(schedulerProvider.ui())
-                    .subscribe(this::onSeriesUnfollowed, this::onSeriesUnfollowedError);
+                    .subscribe(this::onSeriesUnfollowed, this::onSeriesUnfollowedError));
         }
     }
 

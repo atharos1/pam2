@@ -8,25 +8,30 @@ import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 import java.lang.ref.WeakReference;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class LoginPresenter {
     private final WeakReference<LoginView> view;
 
     private final UserRepository userRepository;
-
     private final BaseSchedulerProvider schedulerProvider;
+
+    private final CompositeDisposable disposables;
 
     public LoginPresenter(LoginView view, UserRepository userRepository, BaseSchedulerProvider schedulerProvider) {
         this.view = new WeakReference<>(view);
         this.userRepository = userRepository;
         this.schedulerProvider = schedulerProvider;
-    }
 
-    public void onViewDetached() {
+        this.disposables = new CompositeDisposable();
     }
 
     public void onViewAttached() {
+    }
+
+    public void onViewDetached() {
+        disposables.dispose();
     }
 
     public void loginBegin(String mail, String password) {
@@ -39,15 +44,14 @@ public class LoginPresenter {
         if(view.get() != null) {
             view.get().setMailError(null);
             view.get().setPasswordError(null);
-
             view.get().setLoadingStatus(true);
         }
 
-        userRepository.login(mail, password)
+        disposables.add(userRepository.login(mail, password)
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
                 .doFinally(() -> { if(view.get() != null) view.get().setLoadingStatus(false); })
-                .subscribe(this::loginSuccessful, this::loginError);
+                .subscribe(this::loginSuccessful, this::loginError));
     }
 
     private void loginSuccessful(final User user) {
