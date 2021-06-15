@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -20,6 +22,8 @@ public class HomeFragment extends Fragment implements HomeView {
     private HomePresenter presenter;
     private LinearLayout genresLayout;
     private SeriesCarrouselComponent featuredBanner;
+    private ProgressBar progressBar;
+    private TextView textError;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -30,7 +34,9 @@ public class HomeFragment extends Fragment implements HomeView {
 
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
-        genresLayout = (LinearLayout) root.findViewById(R.id.genres_linear_layout);
+        genresLayout = root.findViewById(R.id.genres_linear_layout);
+        progressBar = root.findViewById(R.id.home_progressbar);
+        textError = root.findViewById(R.id.home_error);
 
         featuredBanner = new SeriesCarrouselComponent(getContext());
         featuredBanner.build();
@@ -54,9 +60,16 @@ public class HomeFragment extends Fragment implements HomeView {
     }
 
     public void createGenreList(int genreId, String genreName) {
+        progressBar.setVisibility(View.GONE);
+
         TvPosterListComponent tvl = new TvPosterListComponent(getContext(), null, genreId, genreName);
         tvl.build();
 
         this.genresLayout.addView(tvl);
+    }
+
+    public void showError() {
+        progressBar.setVisibility(View.GONE);
+        textError.setVisibility(View.VISIBLE);
     }
 }

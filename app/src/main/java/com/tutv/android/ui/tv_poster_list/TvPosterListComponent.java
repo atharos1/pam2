@@ -25,7 +25,7 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
     private RecyclerView listRecycleView;
     private ProgressBar progressBar;
     private ProgressBar scrollProgressBar;
-    private TextView loadError;
+    private TextView textError;
     private final boolean gridLayout;
 
     private boolean buildFinished = false;
@@ -71,7 +71,7 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
         this.listName = findViewById(R.id.list_name);
         this.listRecycleView = findViewById(R.id.list_recyclerview);
         this.progressBar = findViewById(R.id.tv_poster_progressbar);
-        this.loadError = findViewById(R.id.tv_poster_error);
+        this.textError = findViewById(R.id.tv_poster_error);
 
         if (this.gridLayout) {
             int statusBarHeightId = getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -142,7 +142,7 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
         finishLoading();
         progressBar.setVisibility(View.GONE);
         listRecycleView.setVisibility(View.GONE);
-        loadError.setVisibility(View.VISIBLE);
+        textError.setVisibility(View.VISIBLE);
     }
 
     private void addOnScrollListener(RecyclerView recycleView) {

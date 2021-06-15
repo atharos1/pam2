@@ -44,7 +44,6 @@ public class LoginPresenter {
         if(view.get() != null) {
             view.get().setMailError(null);
             view.get().setPasswordError(null);
-
             view.get().setLoadingStatus(true);
         }
 

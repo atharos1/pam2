@@ -43,6 +43,8 @@ public class HomePresenter {
     }
 
     private void genresLoadError(Throwable e) {
-        //ToDO: Mostrar error
+        HomeView actualView = view.get();
+        if (actualView != null)
+            actualView.showError();
     }
 }
