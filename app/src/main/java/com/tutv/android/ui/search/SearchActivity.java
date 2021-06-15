@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,6 +26,7 @@ import com.tutv.android.domain.Genre;
 import com.tutv.android.domain.Network;
 import com.tutv.android.repository.SeriesRepository;
 import com.tutv.android.ui.tv_poster_list.TvPosterListComponent;
+import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 
 import java.util.List;
 
@@ -46,12 +46,12 @@ public class SearchActivity extends AppCompatActivity implements com.tutv.androi
         setContentView(R.layout.activity_search);
 
         filterDialog = createDialog();
-        //setFilters(new ArrayList<>(), new ArrayList<>());
         layout = findViewById(R.id.search_layout);
 
         Container container = ContainerLocator.locateComponent(this);
         SeriesRepository seriesRepository = container.getSeriesRepository();
-        presenter = new SearchPresenter(this, seriesRepository);
+        BaseSchedulerProvider schedulerProvider = container.getSchedulerProvider();
+        presenter = new SearchPresenter(this, seriesRepository, schedulerProvider);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class SearchActivity extends AppCompatActivity implements com.tutv.androi
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.search_action_bar, menu);
-        // getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.actionAndStatusBar)));
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.actionAndStatusBar)));
 
         MenuItem searchItem = menu.findItem(R.id.search_button);
         SearchView searchView = (SearchView) searchItem.getActionView();
@@ -134,17 +134,6 @@ public class SearchActivity extends AppCompatActivity implements com.tutv.androi
                 searchQuery, genre, network);
         tvl.build();
 
-        /*TypedValue tv = new TypedValue();
-        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
-        {
-            int actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
-
-            int statusBarHeightId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-            int statusBarHeight = getResources().getDimensionPixelSize(statusBarHeightId);
-            tvl.setPadding(0, tvl.getPaddingTop() +
-                    statusBarHeight + actionBarHeight, 0, 0);
-        }*/
-
         layout.removeAllViews();
         layout.addView(tvl);
     }
@@ -171,6 +160,7 @@ public class SearchActivity extends AppCompatActivity implements com.tutv.androi
         return mBuilder.create();
     }
 
+    @Override
     public void setFilters(List<Genre> genres, List<Network> networks) {
         ProgressBar progressBar = filterView.findViewById(R.id.filter_progressbar);
         TextView gText = filterView.findViewById(R.id.text_genre);
@@ -197,5 +187,14 @@ public class SearchActivity extends AppCompatActivity implements com.tutv.androi
                 networks);
         networkAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         nSpinner.setAdapter(networkAdapter);
+    }
+
+    @Override
+    public void showFilterError() {
+        ProgressBar progressBar = filterView.findViewById(R.id.filter_progressbar);
+        TextView eText = filterView.findViewById(R.id.filter_error);
+
+        progressBar.setVisibility(View.GONE);
+        eText.setVisibility(View.VISIBLE);
     }
 }

@@ -89,8 +89,8 @@ public class TvPosterListPresenter {
         Disposable disposable =
                 mPublishProcessor
                         .doOnNext(page -> {
-                            TvPosterListView actualView = view.get();
                             loading = true;
+                            TvPosterListView actualView = view.get();
                             if(actualView != null && seriesList.size() > 0) {
                                 actualView.setLoadingStatus(true);
                             }
@@ -110,10 +110,6 @@ public class TvPosterListPresenter {
 
         disposables.add(disposable);
         mPublishProcessor.onNext(pageNumber);
-    }
-
-    public boolean getIsGridLayout() {
-        return this.mode == Mode.SEARCH;
     }
 
     private void onLoad(Object o) {
@@ -140,7 +136,10 @@ public class TvPosterListPresenter {
     }
 
     private void onLoadError(final Throwable e) {
-        // ToDo: Mensaje de error
+        TvPosterListView actualView = view.get();
+        if(actualView != null) {
+            actualView.showLoadError();
+        }
     }
 
     public void getNextPage() {

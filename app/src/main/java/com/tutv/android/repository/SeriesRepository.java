@@ -11,11 +11,11 @@ import com.tutv.android.domain.Genre;
 import com.tutv.android.domain.Network;
 import com.tutv.android.domain.Season;
 import com.tutv.android.domain.Series;
+import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 
 import java.util.List;
 
 import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
 
 public class SeriesRepository {
 
@@ -26,12 +26,16 @@ public class SeriesRepository {
 
     private final UserRepository userRepository;
 
-    public SeriesRepository(SeriesDao seriesDao, SeriesAPI seriesAPI, GenreAPI genreAPI, NetworksAPI networksAPI, UserRepository userRepository) {
+    private final BaseSchedulerProvider schedulerProvider;
+
+    public SeriesRepository(SeriesDao seriesDao, SeriesAPI seriesAPI, GenreAPI genreAPI, NetworksAPI networksAPI,
+                            UserRepository userRepository, BaseSchedulerProvider schedulerProvider) {
         this.seriesDao = seriesDao;
         this.seriesAPI = seriesAPI;
         this.genreAPI = genreAPI;
         this.networksAPI = networksAPI;
         this.userRepository = userRepository;
+        this.schedulerProvider = schedulerProvider;
     }
 
     public Single<Series> getSeriesById(int id) {
@@ -40,11 +44,11 @@ public class SeriesRepository {
     }
 
     public Single<Genre> getGenreById(int genreId, int page) {
-        return genreAPI.getById(genreId, 6, page).subscribeOn(Schedulers.io());
+        return genreAPI.getById(genreId, 6, page).subscribeOn(schedulerProvider.io());
     }
 
     public Single<List<Series>> getSeriesSearch(String name, int page, Integer genre, Integer network) {
-        return seriesAPI.getSeriesSearch(name, 18, page, genre, network).subscribeOn(Schedulers.io());
+        return seriesAPI.getSeriesSearch(name, 18, page, genre, network).subscribeOn(schedulerProvider.io());
     }
 
     public Single<List<Series>> getFeatured() {
@@ -62,7 +66,7 @@ public class SeriesRepository {
     //TODO porque carga en io? Eos bloquea la UI
     public Single<Series> setEpisodeViewed(Series series, Season s, Episode e) {
         return seriesAPI.setSeriesViewed(series.getId(), s.getNumber(), e.getNumEpisode(), new ResourceViewedDTO(e.getLoggedInUserViewed() == null ? true : e.getLoggedInUserViewed() == false ? true : false))
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(schedulerProvider.io())
                 .flatMap(resourceViewedDTO -> {
                     e.setLoggedInUserViewed(resourceViewedDTO.isViewedByUser());
                     seriesDao.update(e);
@@ -72,7 +76,7 @@ public class SeriesRepository {
 
     public Single<Series> setFollowSeries(Series series) {
          return userRepository.getCurrentUser()
-                 .subscribeOn(Schedulers.io())
+                 .subscribeOn(schedulerProvider.io())
                 .flatMap(user -> seriesAPI.setFollowSeries(user.getId(), new SeriesFollowedDTO(series.getId())))
                 .flatMap(seriesFollowedResponseDTO -> {
                     series.setLoggedInUserFollows(seriesFollowedResponseDTO.getLoggedInUserFollows());
@@ -84,7 +88,7 @@ public class SeriesRepository {
 
     public Single<Series> unfollowSeries(Series series) {
         return userRepository.getCurrentUser()
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(schedulerProvider.io())
                 .flatMap(user -> seriesAPI.setUnfollowSeries(user.getId(), series.getId()))
                 .flatMap(seriesFollowedResponseDTO -> {
                     series.setLoggedInUserFollows(seriesFollowedResponseDTO.getLoggedInUserFollows());
@@ -93,7 +97,4 @@ public class SeriesRepository {
                     return Single.just(series);
                 });
     }
-
-
-
 }

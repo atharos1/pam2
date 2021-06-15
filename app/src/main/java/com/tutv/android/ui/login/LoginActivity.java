@@ -16,6 +16,7 @@ import com.tutv.android.datasource.retrofit.endpoint.UserAPI;
 import com.tutv.android.di.Container;
 import com.tutv.android.di.ContainerLocator;
 import com.tutv.android.repository.UserRepository;
+import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 
 public class LoginActivity extends AppCompatActivity implements LoginView, View.OnClickListener {
     private LoginPresenter presenter;
@@ -40,7 +41,8 @@ public class LoginActivity extends AppCompatActivity implements LoginView, View.
 
         Container container = ContainerLocator.locateComponent(this);
         final UserRepository userRepository = container.getUserRepository();
-        presenter = new LoginPresenter(this, userRepository);
+        final BaseSchedulerProvider schedulerProvider = container.getSchedulerProvider();
+        presenter = new LoginPresenter(this, userRepository, schedulerProvider);
     }
 
     @Override

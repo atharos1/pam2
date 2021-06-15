@@ -1,15 +1,12 @@
 package com.tutv.android.ui.series;
 
-
-import android.annotation.SuppressLint;
-
 import com.tutv.android.domain.Episode;
 import com.tutv.android.domain.Season;
 import com.tutv.android.domain.Series;
 import com.tutv.android.repository.SeriesRepository;
+import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 
 import java.lang.ref.WeakReference;
-import java.nio.file.Path;
 
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -24,24 +21,29 @@ public class SeriesPresenter {
     private final int seriesId;
     private Series series;
 
+    private final BaseSchedulerProvider schedulerProvider;
+
     private final CompositeDisposable disposables;
 
-    public SeriesPresenter(SeriesView seriesView, int seriesId, SeriesRepository seriesRepository) {
+    public SeriesPresenter(SeriesView seriesView, int seriesId, SeriesRepository seriesRepository, BaseSchedulerProvider schedulerProvider) {
         this.seriesView = new WeakReference<>(seriesView);
         this.seriesId = seriesId;
         this.seriesRepository = seriesRepository;
+        this.schedulerProvider = schedulerProvider;
 
         this.disposables = new CompositeDisposable();
     }
 
     public void onViewAttached() {
         disposables.add(seriesRepository.getSeriesById(seriesId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(schedulerProvider.io())
+                .observeOn(schedulerProvider.ui())
                 .subscribe(this::onSeriesLoad, this::onSeriesLoadError));
     }
 
-    public void onViewDetached() {}
+    public void onViewDetached() {
+        disposables.dispose();
+    }
 
     private void onSeriesLoad(Series series) {
         this.series = series;
@@ -64,18 +66,18 @@ public class SeriesPresenter {
     }
 
     public void onEpisodeClicked(Season s, Episode e) {
-        seriesRepository.setEpisodeViewed(series, s, e)
-            .observeOn(Schedulers.computation())
-            .flatMap(series -> {
-                for(Season season : series.getSeasons()) {
-                    if(season.getNumber() == s.getNumber()) {
-                        return Single.just(s);
+        disposables.add(seriesRepository.setEpisodeViewed(series, s, e)
+                .observeOn(Schedulers.computation())
+                .flatMap(series -> {
+                    for(Season season : series.getSeasons()) {
+                        if(season.getNumber() == s.getNumber()) {
+                            return Single.just(s);
+                        }
                     }
-                }
-                return Single.error(new Throwable());
-            })
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(this::onEpisodeViewed, this::onEpisodeViewedError);
+                    return Single.error(new Throwable());
+                })
+                .observeOn(schedulerProvider.ui())
+                .subscribe(this::onEpisodeViewed, this::onEpisodeViewedError));
     }
 
     private void onEpisodeViewedError(Throwable throwable) {
@@ -95,13 +97,17 @@ public class SeriesPresenter {
     public void onSeriesFollowClicked() {
         if(series.getLoggedInUserFollows() != null) {
             if(series.getLoggedInUserFollows()) {
-                seriesRepository.setFollowSeries(series)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this::onSeriesFollowed, this::onSeriesFollowedError);
+                disposables.add(
+                        seriesRepository.setFollowSeries(series)
+                                .observeOn(schedulerProvider.ui())
+                                .subscribe(this::onSeriesFollowed, this::onSeriesFollowedError)
+                );
             } else {
-                seriesRepository.unfollowSeries(series)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this::onSeriesUnfollowed, this::onSeriesUnfollowedError);
+                disposables.add(
+                        seriesRepository.unfollowSeries(series)
+                                .observeOn(schedulerProvider.ui())
+                                .subscribe(this::onSeriesUnfollowed, this::onSeriesUnfollowedError)
+                );
             }
         } else {
             SeriesView view = seriesView.get();

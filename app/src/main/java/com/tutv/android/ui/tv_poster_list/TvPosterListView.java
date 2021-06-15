@@ -4,4 +4,5 @@ public interface TvPosterListView {
     void setLoadingStatus(boolean status);
     void setListName(String listName);
     void finishLoading();
+    void showLoadError();
 }
