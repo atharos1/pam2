@@ -5,6 +5,8 @@ import com.tutv.android.domain.Series;
 import com.tutv.android.repository.SeriesRepository;
 import com.tutv.android.ui.series.SeriesView;
 import com.tutv.android.ui.tv_poster_list.tv_poster.TvPosterView;
+import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
+import com.tutv.android.utils.schedulers.SchedulerProvider;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ public class TvPosterListPresenter {
     private final List<Series> seriesList;
     private final PublishProcessor<Integer> mPublishProcessor;
     private final SeriesRepository seriesRepository;
+    private final BaseSchedulerProvider schedulerProvider;
 
     private final CompositeDisposable disposables;
 
@@ -39,26 +42,29 @@ public class TvPosterListPresenter {
     private boolean loading = true;
 
 
-    public TvPosterListPresenter(TvPosterListView view, SeriesRepository seriesRepository, int genreId, String genreName) {
-        this(view, seriesRepository);
+    public TvPosterListPresenter(TvPosterListView view, SeriesRepository seriesRepository,
+                                 BaseSchedulerProvider schedulerProvider, int genreId, String genreName) {
+        this(view, seriesRepository, schedulerProvider);
         this.genreId = genreId;
         this.genreName = genreName;
         this.mode = Mode.GENRE;
     }
 
-    public TvPosterListPresenter(TvPosterListView view, SeriesRepository seriesRepository, String query, Integer genre, Integer network) {
-        this(view, seriesRepository);
+    public TvPosterListPresenter(TvPosterListView view, SeriesRepository seriesRepository,
+                                 BaseSchedulerProvider schedulerProvider, String query, Integer genre, Integer network) {
+        this(view, seriesRepository, schedulerProvider);
         this.query = query;
         this.genre = genre;
         this.network = network;
         this.mode = Mode.SEARCH;
     }
 
-    private TvPosterListPresenter(TvPosterListView view, SeriesRepository seriesRepository) {
+    private TvPosterListPresenter(TvPosterListView view, SeriesRepository seriesRepository, BaseSchedulerProvider schedulerProvider) {
         this.view = new WeakReference<>(view);
-        this.seriesRepository = seriesRepository;
-        this.mPublishProcessor = PublishProcessor.create();
         this.seriesList = new ArrayList<>();
+        this.seriesRepository = seriesRepository;
+        this.schedulerProvider = schedulerProvider;
+        this.mPublishProcessor = PublishProcessor.create();
 
         disposables = new CompositeDisposable();
     }
@@ -86,45 +92,46 @@ public class TvPosterListPresenter {
     }
 
     private void initObservable() {
-        Disposable disposable =
-                mPublishProcessor
-                        .doOnNext(page -> {
-                            loading = true;
-                            TvPosterListView actualView = view.get();
-                            if(actualView != null && seriesList.size() > 0) {
-                                actualView.setLoadingStatus(true);
-                            }
-                        })
-                        .concatMapSingle(page -> {
-                            switch (mode) {
-                                case GENRE:
-                                    return seriesRepository.getGenreById(genreId, page);
-                                case SEARCH:
-                                    return seriesRepository.getSeriesSearch(query, page, genre, network);
-                                default:
-                                    return null;
-                            }
-                        })
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this::onLoad, this::onLoadError);
+        Disposable disposable;
+
+        switch(mode) {
+            case GENRE:
+                disposable =
+                        mPublishProcessor
+                                .doOnNext(this::onNext)
+                                .concatMapSingle(page -> seriesRepository.getGenreById(genreId, page))
+                                .observeOn(schedulerProvider.ui())
+                                .subscribe(this::onLoadGenre, this::onLoadError);
+                break;
+            case SEARCH:
+                disposable =
+                        mPublishProcessor
+                                .doOnNext(this::onNext)
+                                .concatMapSingle(page -> seriesRepository.getSeriesSearch(query, page, genre, network))
+                                .observeOn(schedulerProvider.ui())
+                                .subscribe(this::onLoadSeries, this::onLoadError);
+                break;
+            default:
+                return;
+        }
 
         disposables.add(disposable);
         mPublishProcessor.onNext(pageNumber);
     }
 
-    private void onLoad(Object o) {
-        List<Series> series = null;
-
-        switch (mode) {
-            case GENRE:
-                Genre genre = (Genre) o;
-                series = genre.getSeries();
-                break;
-            case SEARCH:
-                series = (List<Series>) o;
-                break;
+    private void onNext(Integer page) {
+        loading = true;
+        TvPosterListView actualView = view.get();
+        if(actualView != null && seriesList.size() > 0) {
+            actualView.setLoadingStatus(true);
         }
+    }
 
+    private void onLoadGenre(Genre genre) {
+        this.onLoadSeries(genre.getSeries());
+    }
+
+    private void onLoadSeries(List<Series> series) {
         seriesList.addAll(series);
         TvPosterListView actualView = view.get();
         loading = false;
