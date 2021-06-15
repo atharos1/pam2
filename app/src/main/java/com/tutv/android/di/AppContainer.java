@@ -54,7 +54,7 @@ public class AppContainer implements Container {
     @Override
     public SeriesRepository getSeriesRepository() {
         if(seriesRepository == null)
-            seriesRepository = containerModule.provideSeriesRepository(getSeriesDao(), getSeriesAPI(), getGenreAPI(), getNetworksAPI());
+            seriesRepository = containerModule.provideSeriesRepository(getSeriesDao(), getSeriesAPI(), getGenreAPI(), getNetworksAPI(), getUserRepository());
 
         return seriesRepository;
     }

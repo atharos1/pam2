@@ -4,6 +4,8 @@ import android.util.Base64;
 
 import com.tutv.android.datasource.retrofit.endpoint.UserAPI;
 import com.tutv.android.db.dao.UserDao;
+import com.tutv.android.domain.Episode;
+import com.tutv.android.domain.Season;
 import com.tutv.android.domain.User;
 
 import io.reactivex.Single;
@@ -23,4 +25,9 @@ public class UserRepository {
 
         return userAPI.getCurrentUser("Basic " + encodedCredentials);
     }
+
+    public Single<User> getCurrentUser() {
+        return userAPI.getCurrentUser();
+    }
+
 }

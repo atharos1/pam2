@@ -24,16 +24,8 @@ public class Series {
         return bannerUrl;
     }
 
-    public void setBannerUrl(String bannerUrl) {
-        this.bannerUrl = bannerUrl;
-    }
-
     private String bannerUrl;
-
-    public void setPosterUrl(String posterUrl) {
-        this.posterUrl = posterUrl;
-    }
-
+    
     public String getPosterUrl() {
         return posterUrl;
     }
@@ -41,6 +33,16 @@ public class Series {
     private String posterUrl;
 
     @Ignore List<Season> seasons;
+
+    private Boolean loggedInUserFollows;
+
+    public Boolean getLoggedInUserFollows() {
+        return loggedInUserFollows;
+    }
+
+    public void setLoggedInUserFollows(Boolean loggedInUserFollows) {
+        this.loggedInUserFollows = loggedInUserFollows;
+    }
 
     public String getName() {
         return name;
@@ -80,5 +82,13 @@ public class Series {
 
     public void setSeasons(List<Season> seasons) {
         this.seasons = seasons;
+    }
+
+    public void setBannerUrl(String bannerUrl) {
+        this.bannerUrl = bannerUrl;
+    }
+
+    public void setPosterUrl(String posterUrl) {
+        this.posterUrl = posterUrl;
     }
 }

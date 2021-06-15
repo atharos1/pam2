@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "3a9a03a3b78f00f980fbb8853a452c0d",
+    "identityHash": "bdb8a6e194910804db363ac134c65254",
     "entities": [
       {
         "tableName": "user",
@@ -56,7 +56,7 @@
       },
       {
         "tableName": "series",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`series_id` INTEGER NOT NULL, `followers` INTEGER NOT NULL, `name` TEXT, `seriesDescription` TEXT, `bannerUrl` TEXT, `posterUrl` TEXT, PRIMARY KEY(`series_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`series_id` INTEGER NOT NULL, `followers` INTEGER NOT NULL, `name` TEXT, `seriesDescription` TEXT, `bannerUrl` TEXT, `posterUrl` TEXT, `loggedInUserFollows` INTEGER, PRIMARY KEY(`series_id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -92,6 +92,12 @@
             "fieldPath": "posterUrl",
             "columnName": "posterUrl",
             "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "loggedInUserFollows",
+            "columnName": "loggedInUserFollows",
+            "affinity": "INTEGER",
             "notNull": false
           }
         ],
@@ -150,7 +156,7 @@
       },
       {
         "tableName": "Episode",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`episode_id` INTEGER NOT NULL, `name` TEXT, `num_episode` INTEGER NOT NULL, `season_id` INTEGER NOT NULL, PRIMARY KEY(`episode_id`), FOREIGN KEY(`season_id`) REFERENCES `season`(`season_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`episode_id` INTEGER NOT NULL, `name` TEXT, `num_episode` INTEGER NOT NULL, `season_id` INTEGER NOT NULL, `loggedInUserViewed` INTEGER, PRIMARY KEY(`episode_id`), FOREIGN KEY(`season_id`) REFERENCES `season`(`season_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -175,6 +181,12 @@
             "columnName": "season_id",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "loggedInUserViewed",
+            "columnName": "loggedInUserViewed",
+            "affinity": "INTEGER",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -202,7 +214,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3a9a03a3b78f00f980fbb8853a452c0d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bdb8a6e194910804db363ac134c65254')"
     ]
   }
 }
