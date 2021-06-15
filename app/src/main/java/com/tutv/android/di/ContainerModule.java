@@ -35,15 +35,15 @@ public class ContainerModule {
     }
 
     public UserAPI provideUserAPI() {
-        return RetrofitInstance.getRetrofitClient().create(UserAPI.class);
+        return RetrofitInstance.getRetrofitClient(applicationContext).create(UserAPI.class);
     }
 
     public GenreAPI provideGenreAPI() {
-        return RetrofitInstance.getRetrofitClient().create(GenreAPI.class);
+        return RetrofitInstance.getRetrofitClient(applicationContext).create(GenreAPI.class);
     }
 
     public NetworksAPI provideNetworksAPI() {
-        return RetrofitInstance.getRetrofitClient().create(NetworksAPI.class);
+        return RetrofitInstance.getRetrofitClient(applicationContext).create(NetworksAPI.class);
     }
 
     public SeriesRepository provideSeriesRepository(final SeriesDao seriesDao, final SeriesAPI seriesAPI,
@@ -57,7 +57,7 @@ public class ContainerModule {
     }
 
     public SeriesAPI provideSeriesAPI() {
-        return RetrofitInstance.getRetrofitClient().create(SeriesAPI.class);
+        return RetrofitInstance.getRetrofitClient(applicationContext).create(SeriesAPI.class);
     }
 
     public BaseSchedulerProvider provideSchedulerProvider() {

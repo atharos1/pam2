@@ -3,9 +3,11 @@ package com.tutv.android.datasource.dto;
 public class SeriesFollowedResponseDTO {
 
     private int followers;
-    private Boolean loggedInUserFollows;
+    private boolean loggedInUserFollows;
 
-    public SeriesFollowedResponseDTO(int followers, Boolean loggedInUserFollows) {
+    public SeriesFollowedResponseDTO() {}
+
+    public SeriesFollowedResponseDTO(int followers, boolean loggedInUserFollows) {
         this.followers = followers;
         this.loggedInUserFollows = loggedInUserFollows;
     }
@@ -18,7 +20,7 @@ public class SeriesFollowedResponseDTO {
         this.followers = followers;
     }
 
-    public Boolean getLoggedInUserFollows() {
+    public boolean getLoggedInUserFollows() {
         return loggedInUserFollows;
     }
 

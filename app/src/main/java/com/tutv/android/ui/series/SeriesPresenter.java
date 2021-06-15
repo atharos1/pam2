@@ -9,9 +9,7 @@ import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 import java.lang.ref.WeakReference;
 
 import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class SeriesPresenter {
 
@@ -51,7 +49,7 @@ public class SeriesPresenter {
         if(actualView != null) {
             actualView.showSeriesName(series.getName());
             actualView.showSeriesDescription(series.getSeriesDescription());
-            actualView.showUserFollows(false);
+            actualView.showSeriesFollowed(series.getLoggedInUserFollows() == null ? false : series.getLoggedInUserFollows());
             actualView.showFollowerCount(series.getFollowers());
             actualView.bindSeasons(series.getSeasons());
             actualView.showSeriesBanner(series.getBannerUrl());
@@ -67,7 +65,7 @@ public class SeriesPresenter {
 
     public void onEpisodeClicked(Season s, Episode e) {
         disposables.add(seriesRepository.setEpisodeViewed(series, s, e)
-                .observeOn(Schedulers.computation())
+                .observeOn(schedulerProvider.computation())
                 .flatMap(series -> {
                     for(Season season : series.getSeasons()) {
                         if(season.getNumber() == s.getNumber()) {
@@ -81,6 +79,7 @@ public class SeriesPresenter {
     }
 
     private void onEpisodeViewedError(Throwable throwable) {
+        System.err.println(throwable);
         SeriesView view = seriesView.get();
         if (view != null) {
             view.showError("Error al ver el episodio :(");
@@ -95,25 +94,14 @@ public class SeriesPresenter {
     }
 
     public void onSeriesFollowClicked() {
-        if(series.getLoggedInUserFollows() != null) {
-            if(series.getLoggedInUserFollows()) {
-                disposables.add(
-                        seriesRepository.setFollowSeries(series)
-                                .observeOn(schedulerProvider.ui())
-                                .subscribe(this::onSeriesFollowed, this::onSeriesFollowedError)
-                );
-            } else {
-                disposables.add(
-                        seriesRepository.unfollowSeries(series)
-                                .observeOn(schedulerProvider.ui())
-                                .subscribe(this::onSeriesUnfollowed, this::onSeriesUnfollowedError)
-                );
-            }
+        if(series.getLoggedInUserFollows() == null || !series.getLoggedInUserFollows()) {
+            seriesRepository.setFollowSeries(series)
+                    .observeOn(schedulerProvider.ui())
+                    .subscribe(this::onSeriesFollowed, this::onSeriesFollowedError);
         } else {
-            SeriesView view = seriesView.get();
-            if(view != null) {
-                view.showError("Asegurate de loguearte primero :)");
-            }
+            seriesRepository.unfollowSeries(series)
+                    .observeOn(schedulerProvider.ui())
+                    .subscribe(this::onSeriesUnfollowed, this::onSeriesUnfollowedError);
         }
     }
 
@@ -127,7 +115,7 @@ public class SeriesPresenter {
     private void onSeriesUnfollowed(Series series) {
         SeriesView view = seriesView.get();
         if(view != null) {
-            view.showUserFollows(false);
+            view.showSeriesFollowed(false);
             view.showFollowerCount(series.getFollowers());
         }
     }

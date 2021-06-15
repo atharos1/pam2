@@ -11,15 +11,12 @@ import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 import com.tutv.android.utils.schedulers.ImmediateSchedulerProvider;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Single;
-import io.reactivex.android.plugins.RxAndroidPlugins;
-import io.reactivex.schedulers.Schedulers;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;

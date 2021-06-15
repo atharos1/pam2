@@ -55,9 +55,8 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
         this.seasonListAdapter = new SeasonListAdapter((Season s, Episode e) -> seriesPresenter.onEpisodeClicked(s, e));
         seasonRecyclerView.setAdapter(seasonListAdapter);
 
-        if (getSupportActionBar() != null) {
+        if(getSupportActionBar() != null)
             getSupportActionBar().hide();
-        }
 
         Container container = ContainerLocator.locateComponent(this);
         SeriesRepository seriesRepository = container.getSeriesRepository();
@@ -87,11 +86,6 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
     @Override
     public void showSeriesDescription(String seriesDescription) {
         this.seriesDescriptionTextView.setText(seriesDescription);
-    }
-
-    @Override
-    public void showUserFollows(boolean follows) {
-        //throw new NotImplementedError();
     }
 
     @Override

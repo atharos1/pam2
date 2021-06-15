@@ -3,6 +3,7 @@ package com.tutv.android.db.dao;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
@@ -28,13 +29,13 @@ public interface SeriesDao {
     @Query("SELECT * FROM episode WHERE :id = season_id")
     Single<List<Episode>> getEpisodesFromSeasons(int id);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Series s);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Season s);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Episode e);
 
     @Update
