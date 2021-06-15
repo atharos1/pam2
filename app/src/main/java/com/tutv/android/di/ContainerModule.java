@@ -39,8 +39,8 @@ public class ContainerModule {
         return RetrofitInstance.getRetrofitClient().create(GenreAPI.class);
     }
 
-    public SeriesRepository provideSeriesRepository(final SeriesDao seriesDao, final SeriesAPI seriesAPI, final GenreAPI genreAPI) {
-        return new SeriesRepository(seriesDao, seriesAPI, genreAPI);
+    public SeriesRepository provideSeriesRepository(final SeriesDao seriesDao, final SeriesAPI seriesAPI, final GenreAPI genreAPI, final UserRepository userRepository) {
+        return new SeriesRepository(seriesDao, seriesAPI, genreAPI, userRepository);
     }
 
 
