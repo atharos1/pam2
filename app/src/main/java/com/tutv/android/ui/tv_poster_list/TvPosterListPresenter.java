@@ -16,8 +16,18 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.processors.PublishProcessor;
 
 public class TvPosterListPresenter {
-    private final int genreId;
-    private final String genreName;
+    private enum Mode {
+        GENRE,
+        SEARCH;
+    }
+
+    private int genreId;
+    private String genreName;
+    private String query;
+    private Integer genre;
+    private Integer network;
+    private Mode mode;
+
     private final WeakReference<TvPosterListView> view;
     private final List<Series> seriesList;
     private final PublishProcessor<Integer> mPublishProcessor;
@@ -29,10 +39,23 @@ public class TvPosterListPresenter {
     private boolean loading = true;
 
 
-    public TvPosterListPresenter(TvPosterListView view, int genreId, String genreName, SeriesRepository seriesRepository) {
-        this.view = new WeakReference<>(view);
+    public TvPosterListPresenter(TvPosterListView view, SeriesRepository seriesRepository, int genreId, String genreName) {
+        this(view, seriesRepository);
         this.genreId = genreId;
         this.genreName = genreName;
+        this.mode = Mode.GENRE;
+    }
+
+    public TvPosterListPresenter(TvPosterListView view, SeriesRepository seriesRepository, String query, Integer genre, Integer network) {
+        this(view, seriesRepository);
+        this.query = query;
+        this.genre = genre;
+        this.network = network;
+        this.mode = Mode.SEARCH;
+    }
+
+    private TvPosterListPresenter(TvPosterListView view, SeriesRepository seriesRepository) {
+        this.view = new WeakReference<>(view);
         this.seriesRepository = seriesRepository;
         this.mPublishProcessor = PublishProcessor.create();
         this.seriesList = new ArrayList<>();
@@ -72,26 +95,51 @@ public class TvPosterListPresenter {
                                 actualView.setLoadingStatus(true);
                             }
                         })
-                        .concatMapSingle(page -> seriesRepository.getGenreById(genreId, page))
+                        .concatMapSingle(page -> {
+                            switch (mode) {
+                                case GENRE:
+                                    return seriesRepository.getGenreById(genreId, page);
+                                case SEARCH:
+                                    return seriesRepository.getSeriesSearch(query, page, genre, network);
+                                default:
+                                    return null;
+                            }
+                        })
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this::onGenreLoad, this::onGenreLoadError);
+                        .subscribe(this::onLoad, this::onLoadError);
 
         disposables.add(disposable);
         mPublishProcessor.onNext(pageNumber);
     }
 
-    private void onGenreLoad(Genre genre) {
-        seriesList.addAll(genre.getSeries());
+    public boolean getIsGridLayout() {
+        return this.mode == Mode.SEARCH;
+    }
+
+    private void onLoad(Object o) {
+        List<Series> series = null;
+
+        switch (mode) {
+            case GENRE:
+                Genre genre = (Genre) o;
+                series = genre.getSeries();
+                break;
+            case SEARCH:
+                series = (List<Series>) o;
+                break;
+        }
+
+        seriesList.addAll(series);
         TvPosterListView actualView = view.get();
         loading = false;
         if(actualView != null) {
             actualView.setLoadingStatus(false);
-            if (genre.getSeries().size() == 0)
+            if (series.size() == 0)
                 actualView.finishLoading();
         }
     }
 
-    private void onGenreLoadError(final Throwable e) {
+    private void onLoadError(final Throwable e) {
         // ToDo: Mensaje de error
     }
 

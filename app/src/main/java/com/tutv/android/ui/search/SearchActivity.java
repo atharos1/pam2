@@ -20,8 +20,11 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.tutv.android.R;
+import com.tutv.android.di.Container;
+import com.tutv.android.di.ContainerLocator;
 import com.tutv.android.domain.Genre;
 import com.tutv.android.domain.Network;
+import com.tutv.android.repository.SeriesRepository;
 import com.tutv.android.ui.tv_poster_list.TvPosterListComponent;
 
 import java.util.List;
@@ -29,10 +32,11 @@ import java.util.List;
 public class SearchActivity extends AppCompatActivity implements com.tutv.android.ui.search.SearchView {
     private SearchPresenter presenter;
 
-    private ProgressBar searchProgressBar;
     private AlertDialog filterDialog;
     private View filterView;
     private MenuItem searchItem;
+    private LinearLayout layout;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,17 +44,13 @@ public class SearchActivity extends AppCompatActivity implements com.tutv.androi
 
         setContentView(R.layout.activity_search);
 
-        searchProgressBar = findViewById(R.id.search_progressbar);
         filterDialog = createDialog();
         //setFilters(new ArrayList<>(), new ArrayList<>());
+        layout = findViewById(R.id.search_layout);
 
-        LinearLayout layout = findViewById(R.id.search_layout);
-        TvPosterListComponent tvl = new TvPosterListComponent(layout.getContext(), null,
-                10759, "Action and adventure");
-        tvl.build();
-        layout.addView(tvl);
-
-        presenter = new SearchPresenter(this);
+        Container container = ContainerLocator.locateComponent(this);
+        SeriesRepository seriesRepository = container.getSeriesRepository();
+        presenter = new SearchPresenter(this, seriesRepository);
     }
 
     @Override
@@ -122,19 +122,17 @@ public class SearchActivity extends AppCompatActivity implements com.tutv.androi
     }
 
     @Override
-    public void setSearchQuery(String searchQuery) {
+    public void setSearchQuery(String searchQuery, Integer genre, Integer network) {
         this.searchItem.expandActionView();
         SearchView searchView = (SearchView) this.searchItem.getActionView();
         searchView.setQuery(searchQuery, false);
         searchView.clearFocus();
-    }
 
-    @Override
-    public void setLoadingStatus(boolean status) {
-        if(status)
-            searchProgressBar.setVisibility(View.VISIBLE);
-        else
-            searchProgressBar.setVisibility(View.GONE);
+        TvPosterListComponent tvl = new TvPosterListComponent(layout.getContext(), null,
+                searchQuery, genre, network);
+        tvl.build();
+        layout.removeAllViews();
+        layout.addView(tvl);
     }
 
     private AlertDialog createDialog() {
@@ -150,7 +148,7 @@ public class SearchActivity extends AppCompatActivity implements com.tutv.androi
             Genre g = (Genre) gSpinner.getSelectedItem();
             Network n = (Network) nSpinner.getSelectedItem();
             if (g != null && n != null) {
-                // ToDo: applyFilters(g.getId(), n.getId());
+                presenter.applyFilters(g.getId(), n.getId());
             }
         });
 

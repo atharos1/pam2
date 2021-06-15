@@ -1,9 +1,11 @@
 package com.tutv.android.repository;
 
 import com.tutv.android.datasource.retrofit.endpoint.GenreAPI;
+import com.tutv.android.datasource.retrofit.endpoint.NetworksAPI;
 import com.tutv.android.datasource.retrofit.endpoint.SeriesAPI;
 import com.tutv.android.db.dao.SeriesDao;
 import com.tutv.android.domain.Genre;
+import com.tutv.android.domain.Network;
 import com.tutv.android.domain.Series;
 
 import java.util.List;
@@ -16,11 +18,13 @@ public class SeriesRepository {
     private final SeriesDao seriesDao;
     private final SeriesAPI seriesAPI;
     private final GenreAPI genreAPI;
+    private final NetworksAPI networksAPI;
 
-    public SeriesRepository(SeriesDao seriesDao, SeriesAPI seriesAPI, GenreAPI genreAPI) {
+    public SeriesRepository(SeriesDao seriesDao, SeriesAPI seriesAPI, GenreAPI genreAPI, NetworksAPI networksAPI) {
         this.seriesDao = seriesDao;
         this.seriesAPI = seriesAPI;
         this.genreAPI = genreAPI;
+        this.networksAPI = networksAPI;
     }
 
     public Single<Series> getSeriesById(int id) {
@@ -33,5 +37,13 @@ public class SeriesRepository {
 
     public Single<List<Series>> getSeriesSearch(String name, int page, Integer genre, Integer network) {
         return seriesAPI.getSeriesSearch(name, 18, page, genre, network).subscribeOn(Schedulers.io());
+    }
+
+    public Single<List<Genre>> getGenres() {
+        return genreAPI.getAll();
+    }
+
+    public Single<List<Network>> getNetworks() {
+        return networksAPI.getAll();
     }
 }

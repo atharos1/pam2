@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.tutv.android.datasource.retrofit.RetrofitInstance;
 import com.tutv.android.datasource.retrofit.endpoint.GenreAPI;
+import com.tutv.android.datasource.retrofit.endpoint.NetworksAPI;
 import com.tutv.android.datasource.retrofit.endpoint.SeriesAPI;
 import com.tutv.android.datasource.retrofit.endpoint.UserAPI;
 import com.tutv.android.db.AppDatabase;
@@ -39,10 +40,13 @@ public class ContainerModule {
         return RetrofitInstance.getRetrofitClient().create(GenreAPI.class);
     }
 
-    public SeriesRepository provideSeriesRepository(final SeriesDao seriesDao, final SeriesAPI seriesAPI, final GenreAPI genreAPI) {
-        return new SeriesRepository(seriesDao, seriesAPI, genreAPI);
+    public NetworksAPI provideNetworksAPI() {
+        return RetrofitInstance.getRetrofitClient().create(NetworksAPI.class);
     }
 
+    public SeriesRepository provideSeriesRepository(final SeriesDao seriesDao, final SeriesAPI seriesAPI, final GenreAPI genreAPI, final NetworksAPI networksAPI) {
+        return new SeriesRepository(seriesDao, seriesAPI, genreAPI, networksAPI);
+    }
 
     public SeriesDao provideSeriesDao() {
         return AppDatabase.getInstance(applicationContext).seriesDao();

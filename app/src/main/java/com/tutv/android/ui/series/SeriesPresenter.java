@@ -33,9 +33,7 @@ public class SeriesPresenter {
                 .subscribe(this::onSeriesLoad, this::onSeriesLoadError));
     }
 
-    public void onViewDetached() {
-        disposables.dispose();
-    }
+    public void onViewDetached() {}
 
     private void onSeriesLoad(Series series) {
         SeriesView actualView = seriesView.get();
