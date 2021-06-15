@@ -49,7 +49,7 @@ public class SeriesPresenter {
         if(actualView != null) {
             actualView.showSeriesName(series.getName());
             actualView.showSeriesDescription(series.getSeriesDescription());
-            actualView.showUserFollows(false);
+            actualView.showSeriesFollowed(series.getLoggedInUserFollows() == null ? false : series.getLoggedInUserFollows());
             actualView.showFollowerCount(series.getFollowers());
             actualView.bindSeasons(series.getSeasons());
             actualView.showSeriesBanner(series.getBannerUrl());
@@ -63,8 +63,8 @@ public class SeriesPresenter {
         }
     }
 
-    public void onEpisodeClicked(Season s, Episode e) {
-        seriesRepository.setEpisodeViewed(series, s, e)
+    public void onEpisodeClicked(Season s, Episode episode) {
+        seriesRepository.setEpisodeViewed(series, s, episode)
             .observeOn(Schedulers.computation())
             .flatMap(series -> {
                 for(Season season : series.getSeasons()) {
@@ -79,6 +79,7 @@ public class SeriesPresenter {
     }
 
     private void onEpisodeViewedError(Throwable throwable) {
+        System.err.println(throwable);
         SeriesView view = seriesView.get();
         if (view != null) {
             view.showError("Error al ver el episodio :(");
@@ -93,21 +94,14 @@ public class SeriesPresenter {
     }
 
     public void onSeriesFollowClicked() {
-        if(series.getLoggedInUserFollows() != null) {
-            if(series.getLoggedInUserFollows()) {
-                seriesRepository.setFollowSeries(series)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this::onSeriesFollowed, this::onSeriesFollowedError);
-            } else {
-                seriesRepository.unfollowSeries(series)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this::onSeriesUnfollowed, this::onSeriesUnfollowedError);
-            }
+        if(series.getLoggedInUserFollows() == null || !series.getLoggedInUserFollows()) {
+            seriesRepository.setFollowSeries(series)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::onSeriesFollowed, this::onSeriesFollowedError);
         } else {
-            SeriesView view = seriesView.get();
-            if(view != null) {
-                view.showError("Asegurate de loguearte primero :)");
-            }
+            seriesRepository.unfollowSeries(series)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::onSeriesUnfollowed, this::onSeriesUnfollowedError);
         }
     }
 
@@ -121,7 +115,7 @@ public class SeriesPresenter {
     private void onSeriesUnfollowed(Series series) {
         SeriesView view = seriesView.get();
         if(view != null) {
-            view.showUserFollows(false);
+            view.showSeriesFollowed(false);
             view.showFollowerCount(series.getFollowers());
         }
     }

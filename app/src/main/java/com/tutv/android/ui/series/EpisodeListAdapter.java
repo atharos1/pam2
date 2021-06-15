@@ -50,7 +50,7 @@ public class EpisodeListAdapter extends RecyclerView.Adapter<EpisodeListAdapter.
     public void onBindViewHolder(@NonNull @NotNull ViewHolder holder, int position) {
         Episode episode = episodeList.get(position);
         holder.setEpisodeName(episode.getNumEpisode(), episode.getName());
-        holder.setViewed(episode.getLoggedInUserViewed() == null ? false : true);
+        holder.setViewed(episode.getLoggedInUserViewed() == null ? false : episode.getLoggedInUserViewed());
         holder.setListenerPropagation(() -> episodeClickListener.onClick(episode));
     }
 

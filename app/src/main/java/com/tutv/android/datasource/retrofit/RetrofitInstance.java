@@ -1,6 +1,9 @@
 package com.tutv.android.datasource.retrofit;
 
+import android.content.Context;
+
 import com.tutv.android.datasource.retrofit.interceptor.AuthorizationInterceptor;
+import com.tutv.android.datasource.retrofit.interceptor.LoginInterceptor;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -12,22 +15,23 @@ public class RetrofitInstance {
 
     private static Retrofit retrofit;
 
-    public static Retrofit getRetrofitClient() {
+    public static Retrofit getRetrofitClient(Context appContext) {
         if(retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                    .client(getCustomClient())
+                    .client(getCustomClient(appContext))
                     .build();
         }
 
         return retrofit;
     }
 
-    private static OkHttpClient getCustomClient() {
+    private static OkHttpClient getCustomClient(Context appContext) {
         return new OkHttpClient.Builder()
-                .addInterceptor(new AuthorizationInterceptor())
+                .addInterceptor(new AuthorizationInterceptor(appContext))
+                .addInterceptor(new LoginInterceptor(appContext))
                 .build();
     }
 }

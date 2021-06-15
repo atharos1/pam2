@@ -27,6 +27,7 @@
         <activity
             android:name=".ui.series.SeriesActivity"
             android:launchMode="singleTask"
+            android:theme="@style/Theme.TuTv.NoActionBar"
             android:label="Series"/>
         <activity
             android:name=".ui.search.SearchActivity"

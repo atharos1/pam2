@@ -27,16 +27,16 @@ public interface SeriesAPI {
     Single<List<Series>> getSeriesSearch(@Query("name") String name, @Query("pagesize") int pageSize, @Query("page") int page,
                                        @Query("genre") Integer genre, @Query("network") Integer network);
 
-    @PUT("series/{seriesId}/seasons/{seasonId}/episodes/{episodeId}")
+    @PUT("series/{seriesId}/seasons/{seasonId}/episodes/{episodeId}/viewed")
     Single<ResourceViewedDTO> setSeriesViewed(@Path("seriesId") int seriesId, @Path("seasonId") int seasonId, @Path("episodeId") int episodeId, @Body ResourceViewedDTO resourceViewedDTO);
 
     @GET("series/{seriesId}/seasons/{seasonNumber}/episodes/{episodeNumber}")
     Single<Episode> getEpisode(@Path("seriesId") int seriesId, @Path("seasonNumber") int seasonNumber, @Path("episodeNumber") int numEpisode);
 
-    @POST("/users/{userId}/following")
+    @POST("users/{userId}/following")
     Single<SeriesFollowedResponseDTO> setFollowSeries(@Path("userId") int userId, @Body SeriesFollowedDTO seriesFollowedDTO);
 
-    @DELETE("/users/{userId}/following/{seriesId}")
+    @DELETE("users/{userId}/following/{seriesId}")
     Single<SeriesFollowedResponseDTO> setUnfollowSeries(@Path("userId") int userId, @Path("seriesId") int seriesId);
 
     @GET("series/featured")
