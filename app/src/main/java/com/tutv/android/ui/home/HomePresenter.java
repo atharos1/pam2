@@ -2,32 +2,33 @@ package com.tutv.android.ui.home;
 
 import com.tutv.android.domain.Genre;
 import com.tutv.android.repository.SeriesRepository;
+import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class HomePresenter {
 
     private final WeakReference<HomeView> view;
     private final SeriesRepository seriesRepository;
+    private final BaseSchedulerProvider schedulerProvider;
 
     private final CompositeDisposable disposables;
 
-    public HomePresenter(HomeView view, SeriesRepository seriesRepository) {
+    public HomePresenter(HomeView view, SeriesRepository seriesRepository, BaseSchedulerProvider schedulerProvider) {
         this.view = new WeakReference<>(view);
         this.seriesRepository = seriesRepository;
+        this.schedulerProvider = schedulerProvider;
 
         this.disposables = new CompositeDisposable();
     }
 
     public void onViewAttached() {
         disposables.add(seriesRepository.getGenres()
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(schedulerProvider.computation())
+                .observeOn(schedulerProvider.ui())
                 .subscribe(this::genresLoadSuccessful, this::genresLoadError)
         );
     }

@@ -17,6 +17,7 @@ import com.tutv.android.di.ContainerLocator;
 import com.tutv.android.repository.SeriesRepository;
 import com.tutv.android.ui.series_carrousel.SeriesCarrouselComponent;
 import com.tutv.android.ui.tv_poster_list.TvPosterListComponent;
+import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 
 public class HomeFragment extends Fragment implements HomeView {
     private HomePresenter presenter;
@@ -30,7 +31,8 @@ public class HomeFragment extends Fragment implements HomeView {
 
         Container diContainer = ContainerLocator.locateComponent(getContext());
         final SeriesRepository seriesRepository = diContainer.getSeriesRepository();
-        presenter = new HomePresenter(this, seriesRepository);
+        final BaseSchedulerProvider schedulerProvider = diContainer.getSchedulerProvider();
+        presenter = new HomePresenter(this, seriesRepository, schedulerProvider);
 
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 

@@ -1,33 +1,33 @@
 package com.tutv.android.ui.series_carrousel;
 
-import androidx.collection.ArraySet;
-
 import com.tutv.android.domain.Series;
 import com.tutv.android.repository.SeriesRepository;
 import com.tutv.android.ui.series_carrousel.tv_banner.TvBannerView;
+import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class SeriesCarrouselPresenter {
     private final WeakReference<SeriesCarrouselView> view;
     private final SeriesRepository seriesRepository;
+    private final BaseSchedulerProvider schedulerProvider;
     private List<Series> seriesList;
+
     private final CompositeDisposable disposables;
 
-    public SeriesCarrouselPresenter(SeriesCarrouselView view, SeriesRepository seriesRepository) {
+    public SeriesCarrouselPresenter(SeriesCarrouselView view, SeriesRepository seriesRepository, BaseSchedulerProvider schedulerProvider) {
         this.view = new WeakReference<>(view);
         this.seriesRepository = seriesRepository;
+        this.schedulerProvider = schedulerProvider;
+        this.seriesList = new ArrayList<>();
 
         disposables = new CompositeDisposable();
 
-        seriesList = new ArrayList<>();
     }
 
     private void seriesLoadSuccessful(List<Series> series) {
@@ -54,8 +54,8 @@ public class SeriesCarrouselPresenter {
 
         Disposable disposable =
             seriesRepository.getFeatured()
-                    .subscribeOn(Schedulers.computation())
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(schedulerProvider.computation())
+                    .observeOn(schedulerProvider.ui())
                     .subscribe(this::seriesLoadSuccessful, this::seriesLoadError);
 
         disposables.add(disposable);
