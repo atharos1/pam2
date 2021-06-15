@@ -3,6 +3,7 @@ package com.tutv.android.ui.login;
 import com.tutv.android.datasource.retrofit.endpoint.UserAPI;
 import com.tutv.android.domain.User;
 import com.tutv.android.repository.UserRepository;
+import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 
 import java.lang.ref.WeakReference;
 
@@ -14,9 +15,12 @@ public class LoginPresenter {
 
     private final UserRepository userRepository;
 
-    public LoginPresenter(LoginView view, UserRepository userRepository) {
+    private final BaseSchedulerProvider schedulerProvider;
+
+    public LoginPresenter(LoginView view, UserRepository userRepository, BaseSchedulerProvider schedulerProvider) {
         this.view = new WeakReference<>(view);
         this.userRepository = userRepository;
+        this.schedulerProvider = schedulerProvider;
     }
 
     public void onViewDetached() {
@@ -40,8 +44,8 @@ public class LoginPresenter {
         }
 
         userRepository.login(mail, password)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(schedulerProvider.io())
+                .observeOn(schedulerProvider.ui())
                 .doFinally(() -> { if(view.get() != null) view.get().setLoadingStatus(false); })
                 .subscribe(this::loginSuccessful, this::loginError);
     }

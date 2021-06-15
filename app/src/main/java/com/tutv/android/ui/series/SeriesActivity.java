@@ -18,6 +18,7 @@ import com.tutv.android.domain.Episode;
 import com.tutv.android.domain.Season;
 import com.tutv.android.repository.SeriesRepository;
 import com.tutv.android.repository.UserRepository;
+import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 
 import java.util.List;
 
@@ -59,7 +60,8 @@ public class SeriesActivity extends AppCompatActivity implements SeriesView {
 
         Container container = ContainerLocator.locateComponent(this);
         SeriesRepository seriesRepository = container.getSeriesRepository();
-        seriesPresenter = new SeriesPresenter(this, seriesId, seriesRepository);
+        BaseSchedulerProvider schedulerProvider = container.getSchedulerProvider();
+        seriesPresenter = new SeriesPresenter(this, seriesId, seriesRepository, schedulerProvider);
     }
 
     @Override

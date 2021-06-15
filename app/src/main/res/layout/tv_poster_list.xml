@@ -8,8 +8,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <!-- TODO porque hay dos progressbar? -->
-
     <ProgressBar
         android:id="@+id/tv_poster_scroll_progressbar_right"
         style="?android:attr/progressBarStyle"
@@ -58,10 +56,22 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="80dp"
+        android:paddingBottom="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/list_name" />
 
-
+    <TextView
+        android:id="@+id/tv_poster_error"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="90dp"
+        android:paddingBottom="50dp"
+        android:gravity="center"
+        android:text="@string/load_error"
+        android:textColor="@color/textOverBackground"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/list_name" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

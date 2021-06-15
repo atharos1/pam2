@@ -10,12 +10,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.tutv.android.MainActivity;
 import com.tutv.android.R;
-import com.tutv.android.datasource.retrofit.endpoint.UserAPI;
 import com.tutv.android.di.Container;
 import com.tutv.android.di.ContainerLocator;
 import com.tutv.android.repository.UserRepository;
+import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 import com.tutv.android.ui.series.SeriesActivity;
 
 public class LoginActivity extends AppCompatActivity implements LoginView, View.OnClickListener {
@@ -41,7 +40,8 @@ public class LoginActivity extends AppCompatActivity implements LoginView, View.
 
         Container container = ContainerLocator.locateComponent(this);
         final UserRepository userRepository = container.getUserRepository();
-        presenter = new LoginPresenter(this, userRepository);
+        final BaseSchedulerProvider schedulerProvider = container.getSchedulerProvider();
+        presenter = new LoginPresenter(this, userRepository, schedulerProvider);
     }
 
     @Override

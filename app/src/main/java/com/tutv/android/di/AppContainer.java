@@ -11,6 +11,7 @@ import com.tutv.android.db.dao.UserDao;
 import com.tutv.android.repository.SeriesRepository;
 import com.tutv.android.repository.UserRepository;
 import com.tutv.android.ui.login.LoginPresenter;
+import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 
 public class AppContainer implements Container {
     private final ContainerModule containerModule;
@@ -24,6 +25,8 @@ public class AppContainer implements Container {
     private SeriesAPI seriesAPI;
     private GenreAPI genreAPI;
     private NetworksAPI networksAPI;
+
+    private BaseSchedulerProvider schedulerProvider;
 
     public AppContainer(final Context context) {
         this.containerModule = new ContainerModule(context);
@@ -54,7 +57,10 @@ public class AppContainer implements Container {
     @Override
     public SeriesRepository getSeriesRepository() {
         if(seriesRepository == null)
-            seriesRepository = containerModule.provideSeriesRepository(getSeriesDao(), getSeriesAPI(), getGenreAPI(), getNetworksAPI(), getUserRepository());
+            seriesRepository = containerModule.provideSeriesRepository(
+                    getSeriesDao(), getSeriesAPI(), getGenreAPI(),
+                    getNetworksAPI(), getUserRepository(), getSchedulerProvider()
+            );
 
         return seriesRepository;
     }
@@ -85,5 +91,13 @@ public class AppContainer implements Container {
             networksAPI = containerModule.provideNetworksAPI();
 
         return networksAPI;
+    }
+
+    @Override
+    public BaseSchedulerProvider getSchedulerProvider() {
+        if (schedulerProvider == null)
+            schedulerProvider = containerModule.provideSchedulerProvider();
+
+        return schedulerProvider;
     }
 }
