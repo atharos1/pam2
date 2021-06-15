@@ -16,6 +16,7 @@ import com.tutv.android.datasource.retrofit.endpoint.UserAPI;
 import com.tutv.android.di.Container;
 import com.tutv.android.di.ContainerLocator;
 import com.tutv.android.repository.UserRepository;
+import com.tutv.android.ui.series.SeriesActivity;
 
 public class LoginActivity extends AppCompatActivity implements LoginView, View.OnClickListener {
     private LoginPresenter presenter;
@@ -89,6 +90,9 @@ public class LoginActivity extends AppCompatActivity implements LoginView, View.
 
     @Override
     public void dismiss() {
-        startActivity(new Intent(this, MainActivity.class));
+        Intent i = new Intent(this, SeriesActivity.class);
+        i.putExtra("series_id", 66732);
+        startActivity(i);
     }
+
 }

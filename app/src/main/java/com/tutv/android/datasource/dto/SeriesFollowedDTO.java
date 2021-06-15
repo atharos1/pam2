@@ -3,6 +3,8 @@ package com.tutv.android.datasource.dto;
 public class SeriesFollowedDTO {
     private int seriesId;
 
+    public SeriesFollowedDTO() {}
+
     public SeriesFollowedDTO(int seriesId) {
         this.seriesId = seriesId;
     }

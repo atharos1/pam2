@@ -36,6 +36,16 @@ public class SeriesRepository {
 
     public Single<Series> getSeriesById(int id) {
         return seriesDao.getFullSeriesById(id)
+                .subscribeOn(Schedulers.io())
+                .flatMap(series -> {
+                    if(series.getSeasons() == null || series.getSeasons().size() == 0) {
+                        return seriesAPI.getSeriesById(id)
+                                .subscribeOn(Schedulers.io())
+                                .doOnSuccess(s -> seriesDao.insertWholeSeries(s));
+                    } else {
+                        return Single.just(series);
+                    }
+                })
                 .onErrorResumeNext(throwable -> seriesAPI.getSeriesById(id));
     }
 
@@ -60,12 +70,12 @@ public class SeriesRepository {
     }
 
     //TODO porque carga en io? Eos bloquea la UI
-    public Single<Series> setEpisodeViewed(Series series, Season s, Episode e) {
-        return seriesAPI.setSeriesViewed(series.getId(), s.getNumber(), e.getNumEpisode(), new ResourceViewedDTO(e.getLoggedInUserViewed() == null ? true : e.getLoggedInUserViewed() == false ? true : false))
+    public Single<Series> setEpisodeViewed(Series series, Season season, Episode episode) {
+        return seriesAPI.setSeriesViewed(series.getId(), season.getNumber(), episode.getNumEpisode(), new ResourceViewedDTO(episode.getLoggedInUserViewed() == null ? true : !episode.getLoggedInUserViewed()))
                 .subscribeOn(Schedulers.io())
                 .flatMap(resourceViewedDTO -> {
-                    e.setLoggedInUserViewed(resourceViewedDTO.isViewedByUser());
-                    seriesDao.update(e);
+                    episode.setLoggedInUserViewed(resourceViewedDTO.isViewedByUser());
+                    seriesDao.insert(episode);
                     return Single.just(series);
                 });
     }
@@ -77,7 +87,7 @@ public class SeriesRepository {
                 .flatMap(seriesFollowedResponseDTO -> {
                     series.setLoggedInUserFollows(seriesFollowedResponseDTO.getLoggedInUserFollows());
                     series.setFollowers(seriesFollowedResponseDTO.getFollowers());
-                    seriesDao.insert(series);
+                    seriesDao.update(series);
                     return Single.just(series);
                 });
     }
@@ -89,7 +99,7 @@ public class SeriesRepository {
                 .flatMap(seriesFollowedResponseDTO -> {
                     series.setLoggedInUserFollows(seriesFollowedResponseDTO.getLoggedInUserFollows());
                     series.setFollowers(seriesFollowedResponseDTO.getFollowers());
-                    seriesDao.insert(series);
+                    seriesDao.update(series);
                     return Single.just(series);
                 });
     }
