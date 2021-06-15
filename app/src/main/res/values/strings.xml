@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">TuTv</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_dashboard">Soon</string>
+    <string name="title_notifications">Profile</string>
+    <string name="title_activity_search">Results</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in or register</string>
@@ -11,4 +12,12 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+    <string name="title_search">Search</string>
+    <string name="title_filter">Filter</string>
+    <string name="search_hint">Search series</string>
+    <string name="genre">Genre</string>
+    <string name="all_genres">All genres</string>
+    <string name="network">Network</string>
+    <string name="all_networks">All networks</string>
+    <string name="apply_filters">Apply filters</string>
 </resources>

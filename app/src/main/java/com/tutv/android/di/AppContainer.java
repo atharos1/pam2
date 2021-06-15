@@ -3,6 +3,7 @@ package com.tutv.android.di;
 import android.content.Context;
 
 import com.tutv.android.datasource.retrofit.endpoint.GenreAPI;
+import com.tutv.android.datasource.retrofit.endpoint.NetworksAPI;
 import com.tutv.android.datasource.retrofit.endpoint.SeriesAPI;
 import com.tutv.android.datasource.retrofit.endpoint.UserAPI;
 import com.tutv.android.db.dao.SeriesDao;
@@ -22,6 +23,7 @@ public class AppContainer implements Container {
     private SeriesDao seriesDao;
     private SeriesAPI seriesAPI;
     private GenreAPI genreAPI;
+    private NetworksAPI networksAPI;
 
     public AppContainer(final Context context) {
         this.containerModule = new ContainerModule(context);
@@ -52,7 +54,7 @@ public class AppContainer implements Container {
     @Override
     public SeriesRepository getSeriesRepository() {
         if(seriesRepository == null)
-            seriesRepository = containerModule.provideSeriesRepository(getSeriesDao(), getSeriesAPI(), getGenreAPI(), getUserRepository());
+            seriesRepository = containerModule.provideSeriesRepository(getSeriesDao(), getSeriesAPI(), getGenreAPI(), getNetworksAPI(), getUserRepository());
 
         return seriesRepository;
     }
@@ -78,4 +80,10 @@ public class AppContainer implements Container {
         return genreAPI;
     }
 
+    private NetworksAPI getNetworksAPI() {
+        if(networksAPI == null)
+            networksAPI = containerModule.provideNetworksAPI();
+
+        return networksAPI;
+    }
 }

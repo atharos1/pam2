@@ -25,7 +25,7 @@ public class Series {
     }
 
     private String bannerUrl;
-
+    
     public String getPosterUrl() {
         return posterUrl;
     }

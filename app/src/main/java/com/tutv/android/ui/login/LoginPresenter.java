@@ -32,15 +32,17 @@ public class LoginPresenter {
         if(password.isEmpty())
             view.get().setPasswordError("El campo es obligatorio");
 
-        view.get().setMailError(null);
-        view.get().setPasswordError(null);
+        if(view.get() != null) {
+            view.get().setMailError(null);
+            view.get().setPasswordError(null);
 
-        view.get().setLoadingStatus(true);
+            view.get().setLoadingStatus(true);
+        }
 
         userRepository.login(mail, password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doFinally(() -> view.get().setLoadingStatus(false))
+                .doFinally(() -> { if(view.get() != null) view.get().setLoadingStatus(false); })
                 .subscribe(this::loginSuccessful, this::loginError);
     }
 
