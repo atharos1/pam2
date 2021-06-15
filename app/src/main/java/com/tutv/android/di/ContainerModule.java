@@ -12,6 +12,8 @@ import com.tutv.android.db.dao.SeriesDao;
 import com.tutv.android.db.dao.UserDao;
 import com.tutv.android.repository.SeriesRepository;
 import com.tutv.android.repository.UserRepository;
+import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
+import com.tutv.android.utils.schedulers.SchedulerProvider;
 
 public class ContainerModule {
     private final Context applicationContext;
@@ -44,8 +46,10 @@ public class ContainerModule {
         return RetrofitInstance.getRetrofitClient(applicationContext).create(NetworksAPI.class);
     }
 
-    public SeriesRepository provideSeriesRepository(final SeriesDao seriesDao, final SeriesAPI seriesAPI, final GenreAPI genreAPI, final NetworksAPI networksAPI, final UserRepository userRepository) {
-        return new SeriesRepository(seriesDao, seriesAPI, genreAPI, networksAPI, userRepository);
+    public SeriesRepository provideSeriesRepository(final SeriesDao seriesDao, final SeriesAPI seriesAPI,
+                                                    final GenreAPI genreAPI, final NetworksAPI networksAPI,
+                                                    final UserRepository userRepository, final BaseSchedulerProvider schedulerProvider) {
+        return new SeriesRepository(seriesDao, seriesAPI, genreAPI, networksAPI, userRepository, schedulerProvider);
     }
 
     public SeriesDao provideSeriesDao() {
@@ -54,5 +58,9 @@ public class ContainerModule {
 
     public SeriesAPI provideSeriesAPI() {
         return RetrofitInstance.getRetrofitClient(applicationContext).create(SeriesAPI.class);
+    }
+
+    public BaseSchedulerProvider provideSchedulerProvider() {
+        return SchedulerProvider.getInstance();
     }
 }
