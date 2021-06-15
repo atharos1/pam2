@@ -25,6 +25,7 @@ public class SeriesRepository {
     private final NetworksAPI networksAPI;
 
     private final UserRepository userRepository;
+
     private final BaseSchedulerProvider schedulerProvider;
 
     public SeriesRepository(SeriesDao seriesDao, SeriesAPI seriesAPI, GenreAPI genreAPI, NetworksAPI networksAPI,
