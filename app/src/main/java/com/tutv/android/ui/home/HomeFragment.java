@@ -39,6 +39,20 @@ public class HomeFragment extends Fragment implements HomeView {
         return root;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        presenter.onViewAttached();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        presenter.onViewDetached();
+    }
+
     public void createGenreList(int genreId, String genreName) {
         TvPosterListComponent tvl = new TvPosterListComponent(getContext(), null, genreId, genreName);
         tvl.build();

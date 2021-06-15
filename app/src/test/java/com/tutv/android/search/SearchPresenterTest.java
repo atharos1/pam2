@@ -52,7 +52,7 @@ public class SearchPresenterTest {
     }
 
     @Test
-    public void givenTheViewWasAttachedWhenThenShowError() {
+    public void givenTheViewWasAttachedWhenErrorThenShowError() {
         List<Genre> genres = new ArrayList<>();
         List<Network> networks = new ArrayList<>();
 
