@@ -2,26 +2,39 @@ package com.tutv.android.ui.home;
 
 import com.tutv.android.domain.Genre;
 import com.tutv.android.repository.SeriesRepository;
+import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.disposables.CompositeDisposable;
 
 public class HomePresenter {
 
     private final WeakReference<HomeView> view;
     private final SeriesRepository seriesRepository;
+    private final BaseSchedulerProvider schedulerProvider;
 
-    public HomePresenter(HomeView view, SeriesRepository seriesRepository) {
+    private final CompositeDisposable disposables;
+
+    public HomePresenter(HomeView view, SeriesRepository seriesRepository, BaseSchedulerProvider schedulerProvider) {
         this.view = new WeakReference<>(view);
         this.seriesRepository = seriesRepository;
+        this.schedulerProvider = schedulerProvider;
 
-        seriesRepository.getGenres()
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::genresLoadSuccessful, this::genresLoadError);
+        this.disposables = new CompositeDisposable();
+    }
+
+    public void onViewAttached() {
+        disposables.add(seriesRepository.getGenres()
+                .subscribeOn(schedulerProvider.computation())
+                .observeOn(schedulerProvider.ui())
+                .subscribe(this::genresLoadSuccessful, this::genresLoadError)
+        );
+    }
+
+    public void onViewDetached() {
+        disposables.dispose();
     }
 
     private void genresLoadSuccessful(List<Genre> genres) {
@@ -31,5 +44,8 @@ public class HomePresenter {
     }
 
     private void genresLoadError(Throwable e) {
+        HomeView actualView = view.get();
+        if (actualView != null)
+            actualView.showError();
     }
 }

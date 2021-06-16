@@ -8,9 +8,7 @@ import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class SearchPresenter {
     private final WeakReference<SearchView> view;
@@ -47,6 +45,10 @@ public class SearchPresenter {
                 .subscribe(this::onNetworksReceived, this::onLoadError));
     }
 
+    public void onViewDetached() {
+        disposables.dispose();
+    }
+
     private void onGenresReceived(List<Genre> genres) {
         this.genres = genres;
         SearchView actualView = view.get();
@@ -70,15 +72,7 @@ public class SearchPresenter {
         }
     }
 
-    public void onViewDetached() {
-        disposables.dispose();
-    }
-
-    public void performSearch(String searchQuery) {
-        if (this.searchQuery != null && this.searchQuery.equals(searchQuery))
-            return;
-
-        this.searchQuery = searchQuery;
+    private void doSearch() {
         SearchView actualView = view.get();
         if (actualView != null) {
             actualView.setSearchQuery(searchQuery,
@@ -87,11 +81,19 @@ public class SearchPresenter {
         }
     }
 
+    public void performSearch(String searchQuery) {
+        if (this.searchQuery != null && this.searchQuery.equals(searchQuery))
+            return;
+
+        this.searchQuery = searchQuery;
+        doSearch();
+    }
+
     public void applyFilters(int genre, int network) {
         if (this.genre != genre || this.network != network) {
             this.genre = genre;
             this.network = network;
-            performSearch(this.searchQuery);
+            doSearch();
         }
     }
 }

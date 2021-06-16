@@ -18,6 +18,7 @@ import com.tutv.android.R;
 import com.tutv.android.di.Container;
 import com.tutv.android.di.ContainerLocator;
 import com.tutv.android.repository.SeriesRepository;
+import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 
 
 public class TvPosterListComponent extends LinearLayout implements TvPosterListView {
@@ -25,7 +26,7 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
     private RecyclerView listRecycleView;
     private ProgressBar progressBar;
     private ProgressBar scrollProgressBar;
-    private TextView loadError;
+    private TextView textError;
     private final boolean gridLayout;
 
     private boolean buildFinished = false;
@@ -40,7 +41,8 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
 
         Container container = ContainerLocator.locateComponent(context);
         SeriesRepository seriesRepository = container.getSeriesRepository();
-        presenter = new TvPosterListPresenter(this, seriesRepository, genreId, genreName);
+        BaseSchedulerProvider schedulerProvider = container.getSchedulerProvider();
+        presenter = new TvPosterListPresenter(this, seriesRepository, schedulerProvider, genreId, genreName, 6);
     }
 
     public TvPosterListComponent(Context context, @Nullable AttributeSet attrs, String query, Integer genre, Integer network) {
@@ -52,7 +54,8 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
 
         Container container = ContainerLocator.locateComponent(context);
         SeriesRepository seriesRepository = container.getSeriesRepository();
-        presenter = new TvPosterListPresenter(this, seriesRepository, query, genre, network);
+        BaseSchedulerProvider schedulerProvider = container.getSchedulerProvider();
+        presenter = new TvPosterListPresenter(this, seriesRepository, schedulerProvider, query, genre, network, 16);
     }
 
     @Override
@@ -71,7 +74,7 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
         this.listName = findViewById(R.id.list_name);
         this.listRecycleView = findViewById(R.id.list_recyclerview);
         this.progressBar = findViewById(R.id.tv_poster_progressbar);
-        this.loadError = findViewById(R.id.tv_poster_error);
+        this.textError = findViewById(R.id.tv_poster_error);
 
         if (this.gridLayout) {
             int statusBarHeightId = getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -142,7 +145,7 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
         finishLoading();
         progressBar.setVisibility(View.GONE);
         listRecycleView.setVisibility(View.GONE);
-        loadError.setVisibility(View.VISIBLE);
+        textError.setVisibility(View.VISIBLE);
     }
 
     private void addOnScrollListener(RecyclerView recycleView) {

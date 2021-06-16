@@ -13,6 +13,7 @@ import com.tutv.android.R;
 import com.tutv.android.di.Container;
 import com.tutv.android.di.ContainerLocator;
 import com.tutv.android.repository.SeriesRepository;
+import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 
 public class SeriesCarrouselComponent extends LinearLayout implements SeriesCarrouselView {
     private final SeriesCarrouselPresenter presenter;
@@ -27,7 +28,8 @@ public class SeriesCarrouselComponent extends LinearLayout implements SeriesCarr
 
         Container container = ContainerLocator.locateComponent(context);
         SeriesRepository seriesRepository = container.getSeriesRepository();
-        presenter = new SeriesCarrouselPresenter(this, seriesRepository);
+        BaseSchedulerProvider schedulerProvider = container.getSchedulerProvider();
+        presenter = new SeriesCarrouselPresenter(this, seriesRepository, schedulerProvider);
     }
 
     @Override
