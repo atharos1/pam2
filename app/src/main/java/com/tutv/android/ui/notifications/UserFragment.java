@@ -64,7 +64,7 @@ public class UserFragment extends Fragment implements UserView {
 
     @Override
     public void showError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_LONG);
+        Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
     }
 
 }
