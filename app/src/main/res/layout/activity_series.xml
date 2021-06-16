@@ -74,6 +74,7 @@
                 android:layout_height="match_parent"
                 android:layout_below="@id/series_follower_count"
                 android:layout_margin="5dp"
+                android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:id="@+id/series_season_recyclerview"/>
         </RelativeLayout>
