@@ -27,12 +27,6 @@ public class LoginInterceptor implements Interceptor {
         Request request = chain.request();
         Response response = chain.proceed(chain.request());
 
-        Invocation invocation = request.tag(Invocation.class);
-        AuthenticatedRequest authenticatedRequestAnnotation = invocation.method().getAnnotation(AuthenticatedRequest.class);
-
-        if(authenticatedRequestAnnotation == null)
-            return response;
-
         //User auth failed, redirect to login
         if(response.code() == 401) {
             Intent intent = new Intent(appContext, LoginActivity.class);
