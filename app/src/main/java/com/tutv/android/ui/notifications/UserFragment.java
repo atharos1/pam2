@@ -53,7 +53,7 @@ public class UserFragment extends Fragment implements UserView {
 
     @Override
     public void showUserAvatar(String avatarUrl) {
-        Picasso.get().load("https://tutv-pam.herokuapp.com/" + avatarUrl).fit()
+        Picasso.get().load("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png").fit()
                 .into(userAvatarCircleImageView);
     }
 
