@@ -10,4 +10,10 @@ public interface TvBannerView {
     TvBannerPresenter getPresenter();
 
     void navigateToSeriesPage(int seriesId);
+
+    void onDetach();
+
+    void setSeriesFollowed(boolean followed);
+
+    void showError(String error);
 }

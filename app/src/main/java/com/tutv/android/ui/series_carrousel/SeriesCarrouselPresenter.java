@@ -64,4 +64,8 @@ public class SeriesCarrouselPresenter {
     public void onViewDetached() {
         disposables.dispose();
     }
+
+    public void onViewHolderDetached(TvBannerView tvBannerView) {
+        tvBannerView.onDetach();
+    }
 }

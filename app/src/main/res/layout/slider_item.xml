@@ -22,6 +22,7 @@
         app:srcCompat="@android:drawable/screen_background_dark_transparent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/slide_follow_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
