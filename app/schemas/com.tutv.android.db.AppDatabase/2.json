@@ -1,0 +1,247 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "63b3eba5d4aa4c7fa99ca29afc143283",
+    "entities": [
+      {
+        "tableName": "user",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `mail` TEXT, `admin` INTEGER NOT NULL, `avatar` TEXT, `banned` INTEGER NOT NULL, `userName` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mail",
+            "columnName": "mail",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "admin",
+            "columnName": "admin",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "avatar",
+            "columnName": "avatar",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "banned",
+            "columnName": "banned",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userName",
+            "columnName": "userName",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "series",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`series_id` INTEGER NOT NULL, `followers` INTEGER NOT NULL, `name` TEXT, `seriesDescription` TEXT, `bannerUrl` TEXT, `posterUrl` TEXT, `loggedInUserFollows` INTEGER, PRIMARY KEY(`series_id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "series_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "followers",
+            "columnName": "followers",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "seriesDescription",
+            "columnName": "seriesDescription",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "bannerUrl",
+            "columnName": "bannerUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "posterUrl",
+            "columnName": "posterUrl",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "loggedInUserFollows",
+            "columnName": "loggedInUserFollows",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "series_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "season",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`season_id` INTEGER NOT NULL, `number` INTEGER NOT NULL, `series_id` INTEGER NOT NULL, PRIMARY KEY(`season_id`), FOREIGN KEY(`series_id`) REFERENCES `series`(`series_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "season_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "number",
+            "columnName": "number",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "seriesId",
+            "columnName": "series_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "season_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "series",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "series_id"
+            ],
+            "referencedColumns": [
+              "series_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "Episode",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`episode_id` INTEGER NOT NULL, `name` TEXT, `num_episode` INTEGER NOT NULL, `season_id` INTEGER NOT NULL, `loggedInUserViewed` INTEGER, PRIMARY KEY(`episode_id`), FOREIGN KEY(`season_id`) REFERENCES `season`(`season_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "episode_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "numEpisode",
+            "columnName": "num_episode",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "seasonId",
+            "columnName": "season_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "loggedInUserViewed",
+            "columnName": "loggedInUserViewed",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "episode_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "season",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "season_id"
+            ],
+            "referencedColumns": [
+              "season_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "serieslists_and_series_map",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`series_list_id` TEXT NOT NULL, `series_id` INTEGER NOT NULL, PRIMARY KEY(`series_list_id`, `series_id`))",
+        "fields": [
+          {
+            "fieldPath": "seriesListId",
+            "columnName": "series_list_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "seriesId",
+            "columnName": "series_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "series_list_id",
+            "series_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '63b3eba5d4aa4c7fa99ca29afc143283')"
+    ]
+  }
+}

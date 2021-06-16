@@ -15,6 +15,11 @@ public class SeriesListAndSeriesMap {
     @ColumnInfo(name = "series_id")
     private int seriesId;
 
+    public SeriesListAndSeriesMap(@NotNull String seriesListId, int seriesId) {
+        this.seriesListId = seriesListId;
+        this.seriesId = seriesId;
+    }
+
     public String getSeriesListId() {
         return seriesListId;
     }

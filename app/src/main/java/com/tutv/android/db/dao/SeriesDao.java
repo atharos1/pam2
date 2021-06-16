@@ -10,6 +10,7 @@ import androidx.room.Update;
 import com.tutv.android.domain.Episode;
 import com.tutv.android.domain.Season;
 import com.tutv.android.domain.Series;
+import com.tutv.android.domain.SeriesListAndSeriesMap;
 
 import java.util.List;
 
@@ -38,6 +39,9 @@ public interface SeriesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Episode e);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<Series> seriesList);
+
     @Update
     void update(Episode e);
 
@@ -52,6 +56,9 @@ public interface SeriesDao {
 
     @Query("SELECT * FROM series WHERE series.series_id IN (SELECT series_id FROM serieslists_and_series_map WHERE series_list_id = :listId)")
     Single<List<Series>> getSeriesListByListId(String listId);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAllMaps(List<SeriesListAndSeriesMap> map);
 
     default void insertWholeSeries(Series series) {
         insert(series);

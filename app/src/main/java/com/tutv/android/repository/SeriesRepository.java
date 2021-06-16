@@ -11,8 +11,10 @@ import com.tutv.android.domain.Genre;
 import com.tutv.android.domain.Network;
 import com.tutv.android.domain.Season;
 import com.tutv.android.domain.Series;
+import com.tutv.android.domain.SeriesListAndSeriesMap;
 import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import io.reactivex.Single;
@@ -54,10 +56,6 @@ public class SeriesRepository {
     }
 
     public Single<Genre> getGenreById(int genreId, int page, int pageSize) {
-        final String listId = "genre_" + genreId;
-
-
-
         return genreAPI.getById(genreId, pageSize, page)
                 .subscribeOn(schedulerProvider.io())
                 .flatMap(genre -> {
@@ -66,8 +64,36 @@ public class SeriesRepository {
                 });
     }
 
+    public Single<List<Series>> getSeriesByGenreId(int genreId, int page, int pageSize) {
+        final String listId = "genre_" + genreId;
+
+        return seriesDao.getSeriesListByListId(listId)
+                .subscribeOn(schedulerProvider.io())
+                .flatMap(seriesList -> {
+                    if(seriesList == null || seriesList.size() == 0) {
+                        return getSeriesSearch(null, page, genreId, null, pageSize)
+                                .flatMap(sList -> {
+                                    List<SeriesListAndSeriesMap> seriesListAndSeriesMaps = new LinkedList<>();
+                                    for(Series s : sList)
+                                        seriesListAndSeriesMaps.add(new SeriesListAndSeriesMap(listId, s.getId()));
+                                    seriesDao.insertAllMaps(seriesListAndSeriesMaps);
+
+                                    return Single.just(sList);
+                                });
+                    } else {
+                        return Single.just(seriesList);
+                    }
+                })
+                .onErrorResumeNext(throwable -> getSeriesSearch(null, page, genreId, null, pageSize));
+    }
+
     public Single<List<Series>> getSeriesSearch(String name, int page, Integer genre, Integer network, int pageSize) {
-        return seriesAPI.getSeriesSearch(name, pageSize, page, genre, network).subscribeOn(schedulerProvider.io());
+        return seriesAPI.getSeriesSearch(name, pageSize, page, genre, network)
+                .subscribeOn(schedulerProvider.io())
+                .flatMap(seriesList -> {
+                    seriesDao.insertAll(seriesList);
+                    return Single.just(seriesList);
+                });
     }
 
     public Single<List<Series>> getFeatured() {
