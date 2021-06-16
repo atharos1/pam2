@@ -10,23 +10,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.tutv.android.ui.dashboard.DashboardFragment;
-import com.tutv.android.ui.home.HomeFragment;
 import com.tutv.android.ui.login.LoginActivity;
-import com.tutv.android.ui.notifications.NotificationsFragment;
-import com.tutv.android.ui.series.SeriesActivity;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
-import org.jetbrains.annotations.NotNull;
 
 public class MainActivity extends AppCompatActivity {
     /*final Fragment homeFragment = new HomeFragment();
