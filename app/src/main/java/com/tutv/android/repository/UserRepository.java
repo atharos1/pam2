@@ -30,7 +30,14 @@ public class UserRepository {
     }
 
     public Single<User> getCurrentUser() {
-        return userAPI.getCurrentUser();
+        return getCurrentUser(true);
+    }
+
+    public Single<User> getCurrentUser(boolean invokeLoginScreenOnFail) {
+        if(invokeLoginScreenOnFail)
+            return userAPI.getCurrentUser();
+        else
+            return userAPI.getCurrentUserNoForceLoginScreenOnFail();
     }
 
     public void logout() {

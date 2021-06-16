@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.squareup.picasso.Picasso;
 import com.tutv.android.MainActivity;
@@ -57,6 +60,16 @@ public class ProfileFragment extends Fragment implements ProfileView {
         presenter = new ProfilePresenter(this, userRepository, schedulerProvider);
 
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        int statusBarHeightId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        int statusBarHeight = getResources().getDimensionPixelSize(statusBarHeightId);
+        int actionBarHeight = 0;
+
+        TypedValue tv = new TypedValue();
+        if (getContext().getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
+            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+
+        root.setPadding(0, statusBarHeight + actionBarHeight, 0, 0);
 
         profileImage = root.findViewById(R.id.profile_image);
         username = root.findViewById(R.id.profile_username);

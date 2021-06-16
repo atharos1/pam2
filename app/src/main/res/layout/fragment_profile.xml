@@ -6,7 +6,6 @@
     android:background="@color/background"
     android:paddingBottom="56dp"
     android:layout_gravity="center"
-    android:layout_marginTop="50dp"
     android:scrollbars="none">
 
     <ProgressBar

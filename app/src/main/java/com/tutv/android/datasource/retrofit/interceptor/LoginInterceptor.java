@@ -27,12 +27,6 @@ public class LoginInterceptor implements Interceptor {
         Request request = chain.request();
         Response response = chain.proceed(chain.request());
 
-        //User auth failed, redirect to login
-        if(response.code() == 401) {
-            Intent intent = new Intent(appContext, LoginActivity.class);
-            appContext.startActivity(intent);
-        }
-
         String token = response.header("Authorization");
         if(token != null) {
             appContext.getSharedPreferences("Token", Context.MODE_PRIVATE).edit().putString("Token", token).commit();

@@ -17,7 +17,7 @@ public class ProfilePresenter {
     private final UserRepository userRepository;
     private final BaseSchedulerProvider schedulerProvider;
 
-    private final CompositeDisposable disposables;
+    private CompositeDisposable disposables;
 
     private User user;
 
@@ -30,10 +30,13 @@ public class ProfilePresenter {
     }
 
     public void onViewAttached() {
+        if(disposables.isDisposed())
+            disposables = new CompositeDisposable();
+
         if(view.get() != null)
             view.get().setLoading(true);
 
-        disposables.add(userRepository.getCurrentUser()
+        disposables.add(userRepository.getCurrentUser(false)
                 .subscribeOn(schedulerProvider.computation())
                 .observeOn(schedulerProvider.ui())
                 .subscribe(this::loadSuccessful, this::loadError)

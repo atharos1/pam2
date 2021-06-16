@@ -1,8 +1,11 @@
 package com.tutv.android.datasource.retrofit.interceptor;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.tutv.android.datasource.retrofit.annotation.AuthenticatedRequest;
+import com.tutv.android.datasource.retrofit.annotation.AvoidForceShowLoginScreenOnAuthFail;
+import com.tutv.android.ui.login.LoginActivity;
 
 import java.io.IOException;
 
@@ -35,7 +38,18 @@ public class AuthorizationInterceptor implements Interceptor {
         if(sessionToken != "")
             requestBuilder.addHeader("Authorization", sessionToken);
 
-        return chain.proceed(requestBuilder.build());
+        Response response = chain.proceed(requestBuilder.build());
+
+        AvoidForceShowLoginScreenOnAuthFail avoidForceShowLoginScreenOnAuthFailAnnotation = invocation.method().getAnnotation(AvoidForceShowLoginScreenOnAuthFail.class);
+
+        //User auth failed, redirect to login
+        if(avoidForceShowLoginScreenOnAuthFailAnnotation == null && response.code() == 401) {
+            Intent intent = new Intent(appContext, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            appContext.startActivity(intent);
+        }
+
+        return response;
     }
 
 }
