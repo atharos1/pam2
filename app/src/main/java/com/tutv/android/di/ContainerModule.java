@@ -1,6 +1,7 @@
 package com.tutv.android.di;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.tutv.android.datasource.retrofit.RetrofitInstance;
 import com.tutv.android.datasource.retrofit.endpoint.GenreAPI;
@@ -26,8 +27,8 @@ public class ContainerModule {
         return applicationContext;
     }
 
-    public UserRepository provideUserRepository(final UserDao userDao, UserAPI userAPI) {
-        return new UserRepository(userDao, userAPI);
+    public UserRepository provideUserRepository(final UserDao userDao, UserAPI userAPI, SharedPreferences authenticationSharedPreferences) {
+        return new UserRepository(userDao, userAPI, authenticationSharedPreferences);
     }
 
     public UserDao provideUserDao() {
@@ -62,5 +63,9 @@ public class ContainerModule {
 
     public BaseSchedulerProvider provideSchedulerProvider() {
         return SchedulerProvider.getInstance();
+    }
+
+    public SharedPreferences provideSharedPreferences(String name, int mode) {
+        return applicationContext.getSharedPreferences(name, mode);
     }
 }

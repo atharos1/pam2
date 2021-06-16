@@ -1,6 +1,17 @@
 package com.tutv.android.ui.profile;
 
 public interface ProfileView {
-    void createGenreList(int genreId, String genreName);
-    void showError();
+    void showToast(String text);
+
+    void setProfileImage(String imageBase64);
+
+    void setUsername(String text);
+
+    void setMail(String text);
+
+    void openProfileInWebApp(int userId);
+
+    void setLoading(boolean loading);
+
+    void setLayout(boolean isLoggedIn);
 }

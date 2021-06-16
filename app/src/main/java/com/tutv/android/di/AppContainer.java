@@ -1,6 +1,7 @@
 package com.tutv.android.di;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.tutv.android.datasource.retrofit.endpoint.GenreAPI;
 import com.tutv.android.datasource.retrofit.endpoint.NetworksAPI;
@@ -35,7 +36,7 @@ public class AppContainer implements Container {
     @Override
     public UserRepository getUserRepository() {
         if(userRepository == null)
-            userRepository = containerModule.provideUserRepository(getUserDao(), getUserAPI());
+            userRepository = containerModule.provideUserRepository(getUserDao(), getUserAPI(), getAuthenticationSharedPreferences());
 
         return userRepository;
     }
@@ -99,5 +100,9 @@ public class AppContainer implements Container {
             schedulerProvider = containerModule.provideSchedulerProvider();
 
         return schedulerProvider;
+    }
+
+    private SharedPreferences getAuthenticationSharedPreferences() {
+        return containerModule.provideSharedPreferences("Token", Context.MODE_PRIVATE);
     }
 }
