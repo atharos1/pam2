@@ -1,5 +1,6 @@
 package com.tutv.android.repository;
 
+import android.content.SharedPreferences;
 import android.util.Base64;
 
 import com.tutv.android.datasource.retrofit.endpoint.UserAPI;
@@ -13,10 +14,12 @@ import io.reactivex.Single;
 public class UserRepository {
     private final UserDao userDao;
     private final UserAPI userAPI;
+    private final SharedPreferences authenticationSharedPreferences;
 
-    public UserRepository(UserDao userDao, UserAPI userAPI) {
+    public UserRepository(UserDao userDao, UserAPI userAPI, SharedPreferences authenticationSharedPreferences) {
         this.userDao = userDao;
         this.userAPI = userAPI;
+        this.authenticationSharedPreferences = authenticationSharedPreferences;
     }
 
     public Single<User> login(String mail, String password) {
@@ -30,4 +33,9 @@ public class UserRepository {
         return userAPI.getCurrentUser();
     }
 
+    public void logout() {
+        SharedPreferences.Editor editor = authenticationSharedPreferences.edit();
+        editor.remove("Token");
+        editor.commit();
+    }
 }

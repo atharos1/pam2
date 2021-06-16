@@ -30,6 +30,9 @@ public class ProfilePresenter {
     }
 
     public void onViewAttached() {
+        if(view.get() != null)
+            view.get().setLoading(true);
+
         disposables.add(userRepository.getCurrentUser()
                 .subscribeOn(schedulerProvider.computation())
                 .observeOn(schedulerProvider.ui())
@@ -43,11 +46,36 @@ public class ProfilePresenter {
 
     private void loadSuccessful(User user) {
         this.user = user;
+
+        if(view.get() != null) {
+            view.get().setLoading(false);
+
+            view.get().setLayout(true);
+            view.get().setMail(user.getMail());
+            view.get().setUsername(user.getUserName());
+            view.get().setProfileImage(user.getAvatar());
+        }
     }
 
     private void loadError(Throwable e) {
         ProfileView actualView = view.get();
-        if (actualView != null)
-            actualView.showError();
+        if (actualView != null) {
+            view.get().setLoading(false);
+
+            view.get().setLayout(false);
+            actualView.showToast("Error loading user data");
+        }
+    }
+
+    public void openCurrentUserProfileInWebApp() {
+        if(view.get() != null)
+            view.get().openProfileInWebApp(user.getId());
+    }
+
+    public void logout() {
+        if(view.get() != null)
+            view.get().setLayout(false);
+
+        userRepository.logout();
     }
 }
