@@ -63,7 +63,7 @@ public class SeriesPresenter {
     private void onSeriesLoadError(final Throwable e) {
         SeriesView view = seriesView.get();
         if(view != null) {
-            view.showError("Error al cargar la serie :(");
+            view.showError("Error al cargar la serie, asegurese de tener conexion");
         }
     }
 
@@ -86,7 +86,7 @@ public class SeriesPresenter {
         System.err.println(throwable);
         SeriesView view = seriesView.get();
         if (view != null) {
-            view.showError("Error al ver el episodio :(");
+            view.showError("Error al ver el episodio, asegurese de tener conexion y estar logueado");
         }
     }
 
@@ -113,7 +113,7 @@ public class SeriesPresenter {
     private void onSeriesUnfollowedError(Throwable throwable) {
         SeriesView view = seriesView.get();
         if(view != null) {
-            view.showError("Error al dejar de seguir la serie :(");
+            view.showError("Error al dejar de seguir la serie, asegurese de tener conexion y estar logueado");
         }
     }
 
@@ -129,7 +129,7 @@ public class SeriesPresenter {
     private void onSeriesFollowedError(Throwable throwable) {
         SeriesView view = seriesView.get();
         if(view != null) {
-            view.showError("Error al dejar seguir la serie :(");
+            view.showError("Error al seguir la serie, asegurese de tener conexion y estar logueado");
         }
     }
 
