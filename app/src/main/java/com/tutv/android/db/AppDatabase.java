@@ -11,9 +11,10 @@ import com.tutv.android.db.dao.UserDao;
 import com.tutv.android.domain.Episode;
 import com.tutv.android.domain.Season;
 import com.tutv.android.domain.Series;
+import com.tutv.android.domain.SeriesListAndSeriesMap;
 import com.tutv.android.domain.User;
 
-@Database(entities = {User.class, Series.class, Season.class, Episode.class}, version = 1)
+@Database(entities = {User.class, Series.class, Season.class, Episode.class, SeriesListAndSeriesMap.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
     private static final String NAME = "app_db";
     private static AppDatabase instance;

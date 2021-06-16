@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "bdb8a6e194910804db363ac134c65254",
+    "identityHash": "63b3eba5d4aa4c7fa99ca29afc143283",
     "entities": [
       {
         "tableName": "user",
@@ -209,12 +209,39 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "serieslists_and_series_map",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`series_list_id` TEXT NOT NULL, `series_id` INTEGER NOT NULL, PRIMARY KEY(`series_list_id`, `series_id`))",
+        "fields": [
+          {
+            "fieldPath": "seriesListId",
+            "columnName": "series_list_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "seriesId",
+            "columnName": "series_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "series_list_id",
+            "series_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bdb8a6e194910804db363ac134c65254')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '63b3eba5d4aa4c7fa99ca29afc143283')"
     ]
   }
 }

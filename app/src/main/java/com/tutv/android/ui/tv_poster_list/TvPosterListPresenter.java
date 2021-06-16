@@ -3,16 +3,13 @@ package com.tutv.android.ui.tv_poster_list;
 import com.tutv.android.domain.Genre;
 import com.tutv.android.domain.Series;
 import com.tutv.android.repository.SeriesRepository;
-import com.tutv.android.ui.series.SeriesView;
 import com.tutv.android.ui.tv_poster_list.tv_poster.TvPosterView;
 import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
-import com.tutv.android.utils.schedulers.SchedulerProvider;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.processors.PublishProcessor;
@@ -38,26 +35,29 @@ public class TvPosterListPresenter {
 
     private final CompositeDisposable disposables;
 
-    private static final int PAGE_SIZE = 6;
+    private int pageSize = 6;
 
-    private int pageNumber = 1;
     private boolean loading = true;
+
+    private boolean reachedEnd = false;
 
 
     public TvPosterListPresenter(TvPosterListView view, SeriesRepository seriesRepository,
-                                 BaseSchedulerProvider schedulerProvider, int genreId, String genreName) {
+                                 BaseSchedulerProvider schedulerProvider, int genreId, String genreName, int pageSize) {
         this(view, seriesRepository, schedulerProvider);
         this.genreId = genreId;
         this.genreName = genreName;
+        this.pageSize = pageSize;
         this.mode = Mode.GENRE;
     }
 
     public TvPosterListPresenter(TvPosterListView view, SeriesRepository seriesRepository,
-                                 BaseSchedulerProvider schedulerProvider, String query, Integer genre, Integer network) {
+                                 BaseSchedulerProvider schedulerProvider, String query, Integer genre, Integer network, int pageSize) {
         this(view, seriesRepository, schedulerProvider);
         this.query = query;
         this.genre = genre;
         this.network = network;
+        this.pageSize = pageSize;
         this.mode = Mode.SEARCH;
     }
 
@@ -101,7 +101,7 @@ public class TvPosterListPresenter {
                 disposable =
                         mPublishProcessor
                                 .doOnNext(this::onNext)
-                                .concatMapSingle(page -> seriesRepository.getGenreById(genreId, page))
+                                .concatMapSingle(page -> seriesRepository.getGenreById(genreId, page, pageSize))
                                 .observeOn(schedulerProvider.ui())
                                 .subscribe(this::onLoadGenre, this::onLoadError);
                 break;
@@ -109,7 +109,7 @@ public class TvPosterListPresenter {
                 disposable =
                         mPublishProcessor
                                 .doOnNext(this::onNext)
-                                .concatMapSingle(page -> seriesRepository.getSeriesSearch(query, page, genre, network))
+                                .concatMapSingle(page -> seriesRepository.getSeriesSearch(query, page, genre, network, 18))
                                 .observeOn(schedulerProvider.ui())
                                 .subscribe(this::onLoadSeries, this::onLoadError);
                 break;
@@ -118,7 +118,7 @@ public class TvPosterListPresenter {
         }
 
         disposables.add(disposable);
-        mPublishProcessor.onNext(pageNumber);
+        mPublishProcessor.onNext(getPageNumber() + 1);
     }
 
     private void onNext(Integer page) {
@@ -134,6 +134,9 @@ public class TvPosterListPresenter {
     }
 
     private void onLoadSeries(List<Series> series) {
+        if(series.size() < pageSize)
+            reachedEnd = true;
+
         seriesList.addAll(series);
         TvPosterListView actualView = view.get();
         loading = false;
@@ -152,10 +155,13 @@ public class TvPosterListPresenter {
     }
 
     public void getNextPage() {
-        if (!loading) {
-            pageNumber++;
-            mPublishProcessor.onNext(pageNumber);
+        if (!loading && !reachedEnd) {
+            mPublishProcessor.onNext(getPageNumber() + 1);
         }
+    }
+
+    private int getPageNumber() {
+        return seriesList.size() / pageSize;
     }
 
 }

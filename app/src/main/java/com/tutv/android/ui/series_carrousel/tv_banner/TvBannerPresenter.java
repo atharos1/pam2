@@ -32,7 +32,7 @@ public class TvBannerPresenter {
         if(view.get() != null) {
             view.get().setImageUrl(series.getBannerUrl());
             view.get().setTitle(series.getName());
-            view.get().setSubtitle(series.getFollowers() + " followers");
+            view.get().setSubtitle(series.getFollowers() + (series.getFollowers() == 1 ? " follower" : " followers"));
 
             view.get().setSeriesFollowed(series.getLoggedInUserFollows() != null && series.getLoggedInUserFollows());
         }
@@ -67,7 +67,7 @@ public class TvBannerPresenter {
 
     private void onSeriesFollowed(Series series) {
         if(view.get() != null) {
-            view.get().setSubtitle(series.getFollowers() + " followers");
+            view.get().setSubtitle(series.getFollowers() + (series.getFollowers() == 1 ? " follower" : " followers"));
             view.get().setSeriesFollowed(series.getLoggedInUserFollows());
         }
     }

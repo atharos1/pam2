@@ -42,7 +42,7 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
         Container container = ContainerLocator.locateComponent(context);
         SeriesRepository seriesRepository = container.getSeriesRepository();
         BaseSchedulerProvider schedulerProvider = container.getSchedulerProvider();
-        presenter = new TvPosterListPresenter(this, seriesRepository, schedulerProvider, genreId, genreName);
+        presenter = new TvPosterListPresenter(this, seriesRepository, schedulerProvider, genreId, genreName, 6);
     }
 
     public TvPosterListComponent(Context context, @Nullable AttributeSet attrs, String query, Integer genre, Integer network) {
@@ -55,7 +55,7 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
         Container container = ContainerLocator.locateComponent(context);
         SeriesRepository seriesRepository = container.getSeriesRepository();
         BaseSchedulerProvider schedulerProvider = container.getSchedulerProvider();
-        presenter = new TvPosterListPresenter(this, seriesRepository, schedulerProvider, query, genre, network);
+        presenter = new TvPosterListPresenter(this, seriesRepository, schedulerProvider, query, genre, network, 16);
     }
 
     @Override

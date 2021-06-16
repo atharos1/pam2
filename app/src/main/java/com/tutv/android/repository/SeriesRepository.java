@@ -53,12 +53,12 @@ public class SeriesRepository {
                 .onErrorResumeNext(throwable -> seriesAPI.getSeriesById(id));
     }
 
-    public Single<Genre> getGenreById(int genreId, int page) {
+    public Single<Genre> getGenreById(int genreId, int page, int pageSize) {
         final String listId = "genre_" + genreId;
 
 
 
-        return genreAPI.getById(genreId, 6, page)
+        return genreAPI.getById(genreId, pageSize, page)
                 .subscribeOn(schedulerProvider.io())
                 .flatMap(genre -> {
 
@@ -66,8 +66,8 @@ public class SeriesRepository {
                 });
     }
 
-    public Single<List<Series>> getSeriesSearch(String name, int page, Integer genre, Integer network) {
-        return seriesAPI.getSeriesSearch(name, 18, page, genre, network).subscribeOn(schedulerProvider.io());
+    public Single<List<Series>> getSeriesSearch(String name, int page, Integer genre, Integer network, int pageSize) {
+        return seriesAPI.getSeriesSearch(name, pageSize, page, genre, network).subscribeOn(schedulerProvider.io());
     }
 
     public Single<List<Series>> getFeatured() {
