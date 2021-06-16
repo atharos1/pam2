@@ -63,7 +63,6 @@ public class ProfilePresenter {
             view.get().setLoading(false);
 
             view.get().setLayout(false);
-            actualView.showToast("Error loading user data");
         }
     }
 
