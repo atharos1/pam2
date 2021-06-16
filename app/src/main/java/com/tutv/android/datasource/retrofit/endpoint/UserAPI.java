@@ -1,5 +1,6 @@
 package com.tutv.android.datasource.retrofit.endpoint;
 
+import com.tutv.android.datasource.retrofit.annotation.AuthenticatedRequest;
 import com.tutv.android.domain.User;
 
 import io.reactivex.Single;
@@ -11,6 +12,7 @@ public interface UserAPI {
     @GET("user")
     Single<User> getCurrentUser(@Header("Authorization") String authHeader);
 
+    @AuthenticatedRequest
     @GET("user")
     Single<User> getCurrentUser();
 }

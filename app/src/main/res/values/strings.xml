@@ -20,5 +20,5 @@
     <string name="network">Network</string>
     <string name="all_networks">All networks</string>
     <string name="apply_filters">Apply filters</string>
-    <string name="load_error">¡Lo sentimos! No pudimos cargar este resultado.</string>
+    <string name="load_error">Sorry! We were unable to complete your request. Please check your internet connection.</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.tutv.android.datasource.retrofit.endpoint;
 
+import com.tutv.android.datasource.retrofit.annotation.AuthenticatedRequest;
 import com.tutv.android.domain.Genre;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface GenreAPI {
+    @AuthenticatedRequest
     @GET("genres")
     Single<List<Genre>> getAll();
 

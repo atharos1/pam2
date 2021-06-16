@@ -34,6 +34,13 @@ public class SeriesCarrouselAdapter extends RecyclerView.Adapter {
     }
 
     @Override
+    public void onViewDetachedFromWindow(@NonNull @NotNull RecyclerView.ViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+
+        presenter.onViewHolderDetached((TvBannerView) holder);
+    }
+
+    @Override
     public void onBindViewHolder(@NonNull @NotNull RecyclerView.ViewHolder holder, int position) {
         presenter.onBindRepositoryRowViewAtPosition(position, (TvBannerView) holder);
     }

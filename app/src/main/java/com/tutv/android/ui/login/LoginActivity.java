@@ -90,9 +90,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView, View.
 
     @Override
     public void dismiss() {
-        Intent i = new Intent(this, SeriesActivity.class);
-        i.putExtra("series_id", 66732);
-        startActivity(i);
+        finish();
     }
 
 }

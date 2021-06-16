@@ -11,8 +11,10 @@ import com.tutv.android.domain.Genre;
 import com.tutv.android.domain.Network;
 import com.tutv.android.domain.Season;
 import com.tutv.android.domain.Series;
+import com.tutv.android.domain.SeriesListAndSeriesMap;
 import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import io.reactivex.Single;
@@ -50,15 +52,48 @@ public class SeriesRepository {
                         return Single.just(series);
                     }
                 })
-                .onErrorResumeNext(throwable -> seriesAPI.getSeriesById(id));
+                .onErrorResumeNext(throwable -> seriesAPI.getSeriesById(id).subscribeOn(schedulerProvider.io()).doOnSuccess(s -> seriesDao.insertWholeSeries(s)));
     }
 
-    public Single<Genre> getGenreById(int genreId, int page) {
-        return genreAPI.getById(genreId, 6, page).subscribeOn(schedulerProvider.io());
+    public Single<Genre> getGenreById(int genreId, int page, int pageSize) {
+        return genreAPI.getById(genreId, pageSize, page)
+                .subscribeOn(schedulerProvider.io())
+                .flatMap(genre -> {
+
+                    return Single.just(genre);
+                });
     }
 
-    public Single<List<Series>> getSeriesSearch(String name, int page, Integer genre, Integer network) {
-        return seriesAPI.getSeriesSearch(name, 18, page, genre, network).subscribeOn(schedulerProvider.io());
+    public Single<List<Series>> getSeriesByGenreId(int genreId, int page, int pageSize) {
+        final String listId = "genre_" + genreId;
+
+        return seriesDao.getSeriesListByListId(listId)
+                .subscribeOn(schedulerProvider.io())
+                .flatMap(seriesList -> {
+                    if(seriesList == null || seriesList.size() == 0) {
+                        return getSeriesSearch(null, page, genreId, null, pageSize)
+                                .flatMap(sList -> {
+                                    List<SeriesListAndSeriesMap> seriesListAndSeriesMaps = new LinkedList<>();
+                                    for(Series s : sList)
+                                        seriesListAndSeriesMaps.add(new SeriesListAndSeriesMap(listId, s.getId()));
+                                    seriesDao.insertAllMaps(seriesListAndSeriesMaps);
+
+                                    return Single.just(sList);
+                                });
+                    } else {
+                        return Single.just(seriesList);
+                    }
+                })
+                .onErrorResumeNext(throwable -> getSeriesSearch(null, page, genreId, null, pageSize));
+    }
+
+    public Single<List<Series>> getSeriesSearch(String name, int page, Integer genre, Integer network, int pageSize) {
+        return seriesAPI.getSeriesSearch(name, pageSize, page, genre, network)
+                .subscribeOn(schedulerProvider.io())
+                .flatMap(seriesList -> {
+                    seriesDao.insertAll(seriesList);
+                    return Single.just(seriesList);
+                });
     }
 
     public Single<List<Series>> getFeatured() {
@@ -73,12 +108,13 @@ public class SeriesRepository {
         return networksAPI.getAll();
     }
 
-    //TODO porque carga en io? Eos bloquea la UI
     public Single<Series> setEpisodeViewed(Series series, Season season, Episode episode) {
         return seriesAPI.setSeriesViewed(series.getId(), season.getNumber(), episode.getNumEpisode(), new ResourceViewedDTO(episode.getLoggedInUserViewed() == null ? true : !episode.getLoggedInUserViewed()))
                 .subscribeOn(schedulerProvider.io())
                 .flatMap(resourceViewedDTO -> {
                     episode.setLoggedInUserViewed(resourceViewedDTO.isViewedByUser());
+                    seriesDao.insert(series);
+                    seriesDao.insert(season);
                     seriesDao.insert(episode);
                     return Single.just(series);
                 });
