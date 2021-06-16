@@ -7,7 +7,6 @@ import com.tutv.android.repository.SeriesRepository;
 import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 
 import java.lang.ref.WeakReference;
-import java.util.Optional;
 
 import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;

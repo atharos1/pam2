@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 public class TvPosterListPresenterTest {
-    TvPosterListView view;
+    private TvPosterListView view;
     private SeriesRepository seriesRepository;
 
     private final int genreId = 1;
@@ -58,14 +58,6 @@ public class TvPosterListPresenterTest {
         genreFirstPage.setSeries(seriesFirstPage);
         genreSecondPage.setSeries(seriesSecondPage);
         genreEmptyPage.setSeries(seriesEmptyPage);
-
-        Genre genrePage2 = new Genre(genreId, genreName);
-        List<Series> seriesPage2 = new ArrayList<>();
-        for (int i = 0; i < pageSize; i++)
-            seriesPage2.add(new Series());
-        genrePage2.setSeries(seriesPage2);
-
-
 
         presenter = new TvPosterListPresenter(view, seriesRepository, schedulerProvider,
                 genreId, genreName, pageSize);
@@ -114,7 +106,7 @@ public class TvPosterListPresenterTest {
     }
 
     @Test
-    public void givenViewWasAttachedWhenNetworkErrorThenShowError() {
+    public void givenTheViewWasAttachedWhenNetworkErrorThenShowError() {
         when(seriesRepository.getGenreById(genreId, 1, pageSize)).thenReturn(Single.error(new Throwable()));
 
         presenter.onViewAttached();
@@ -135,7 +127,7 @@ public class TvPosterListPresenterTest {
     }
 
     @Test
-    public void givenViewIsAttachedThenLoadTheCorrectSeries() {
+    public void givenTheViewWasAttachedThenLoadTheCorrectSeries() {
         when(seriesRepository.getGenreById(genreId, 1, pageSize)).thenReturn(Single.just(genreFirstPage));
 
         TvPosterView tvPosterView = mock(TvPosterView.class);
