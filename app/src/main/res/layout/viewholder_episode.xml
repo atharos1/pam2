@@ -8,7 +8,7 @@
     <!--width=0dp lets the constraint layout decide the actual width based on the constraints. Source https://stackoverflow.com/questions/4851659/how-to-wrap-text-in-textview-in-android/44186810 -->
     <TextView
         android:id="@+id/episode_name"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
