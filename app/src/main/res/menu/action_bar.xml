@@ -9,9 +9,4 @@
         android:title="@string/title_search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="collapseActionView|always" />
-    <item
-        android:icon="@drawable/ic_baseline_person_24"
-        android:onClick="menuLoginButton_clicked"
-        android:title="Sign in"
-        app:showAsAction="ifRoom" />
 </menu>

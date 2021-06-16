@@ -20,15 +20,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import org.jetbrains.annotations.NotNull;
-
 public class MainActivity extends AppCompatActivity {
-    /*final Fragment homeFragment = new HomeFragment();
-    final Fragment dashboardFragment = new DashboardFragment();
-    final Fragment notificationsFragment = new NotificationsFragment();
-    final FragmentManager fm = getSupportFragmentManager();
-    Fragment active = homeFragment;*/
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,40 +29,13 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_profile)
+                R.id.navigation_home, R.id.navigation_profile)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
         navView.setOnNavigationItemReselectedListener((menuView) -> {});
-
-        //fm.beginTransaction().add(R.id.nav_host_fragment, notificationsFragment, "3").hide(notificationsFragment).commit();
-        //fm.beginTransaction().add(R.id.nav_host_fragment, dashboardFragment, "2").hide(dashboardFragment).commit();
-        //fm.beginTransaction().add(R.id.nav_host_fragment, homeFragment, "1").commit();
-
-        /*navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.navigation_home:
-                        fm.beginTransaction().hide(active).show(homeFragment).commit();
-                        active = homeFragment;
-                        return true;
-
-                    case R.id.navigation_dashboard:
-                        fm.beginTransaction().hide(active).show(dashboardFragment).commit();
-                        active = dashboardFragment;
-                        return true;
-
-                    case R.id.navigation_profile:
-                        fm.beginTransaction().hide(active).show(notificationsFragment).commit();
-                        active = notificationsFragment;
-                        return true;
-                }
-                return false;
-            }
-        });*/
     }
 
 
