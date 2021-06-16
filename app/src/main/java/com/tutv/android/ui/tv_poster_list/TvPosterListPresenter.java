@@ -38,24 +38,29 @@ public class TvPosterListPresenter {
 
     private final CompositeDisposable disposables;
 
-    private int pageNumber = 1;
+    private int pageSize = 6;
+
     private boolean loading = true;
+
+    private boolean reachedEnd = false;
 
 
     public TvPosterListPresenter(TvPosterListView view, SeriesRepository seriesRepository,
-                                 BaseSchedulerProvider schedulerProvider, int genreId, String genreName) {
+                                 BaseSchedulerProvider schedulerProvider, int genreId, String genreName, int pageSize) {
         this(view, seriesRepository, schedulerProvider);
         this.genreId = genreId;
         this.genreName = genreName;
+        this.pageSize = pageSize;
         this.mode = Mode.GENRE;
     }
 
     public TvPosterListPresenter(TvPosterListView view, SeriesRepository seriesRepository,
-                                 BaseSchedulerProvider schedulerProvider, String query, Integer genre, Integer network) {
+                                 BaseSchedulerProvider schedulerProvider, String query, Integer genre, Integer network, int pageSize) {
         this(view, seriesRepository, schedulerProvider);
         this.query = query;
         this.genre = genre;
         this.network = network;
+        this.pageSize = pageSize;
         this.mode = Mode.SEARCH;
     }
 
@@ -116,7 +121,7 @@ public class TvPosterListPresenter {
         }
 
         disposables.add(disposable);
-        mPublishProcessor.onNext(pageNumber);
+        mPublishProcessor.onNext(getPageNumber() + 1);
     }
 
     private void onNext(Integer page) {
@@ -132,13 +137,16 @@ public class TvPosterListPresenter {
     }
 
     private void onLoadSeries(List<Series> series) {
+        if(series.size() < pageSize)
+            reachedEnd = true;
+
         seriesList.addAll(series);
         TvPosterListView actualView = view.get();
         loading = false;
         if(actualView != null) {
             actualView.setLoadingStatus(false);
-            if (series.size() == 0)
-                actualView.finishLoading();
+            if (reachedEnd)
+                actualView.notifyEndReached();
         }
     }
 
@@ -150,10 +158,12 @@ public class TvPosterListPresenter {
     }
 
     public void getNextPage() {
-        if (!loading) {
-            pageNumber++;
-            mPublishProcessor.onNext(pageNumber);
+        if (!loading && !reachedEnd) {
+            mPublishProcessor.onNext(getPageNumber() + 1);
         }
     }
 
+    private int getPageNumber() {
+        return seriesList.size() / pageSize;
+    }
 }

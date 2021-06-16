@@ -87,6 +87,7 @@
         android:clickable="true"
         android:src="@drawable/ic_star_empty"
         android:scaleType="center"
+        app:borderWidth="0dp"
         app:layout_anchor="@id/series_app_bar"
         app:layout_anchorGravity="end|bottom"
         android:layout_marginRight="30dp"
