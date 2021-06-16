@@ -18,6 +18,7 @@ import com.tutv.android.R;
 import com.tutv.android.di.Container;
 import com.tutv.android.di.ContainerLocator;
 import com.tutv.android.repository.SeriesRepository;
+import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 
 
 public class TvPosterListComponent extends LinearLayout implements TvPosterListView {
@@ -40,7 +41,8 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
 
         Container container = ContainerLocator.locateComponent(context);
         SeriesRepository seriesRepository = container.getSeriesRepository();
-        presenter = new TvPosterListPresenter(this, seriesRepository, genreId, genreName);
+        BaseSchedulerProvider schedulerProvider = container.getSchedulerProvider();
+        presenter = new TvPosterListPresenter(this, seriesRepository, schedulerProvider, genreId, genreName);
     }
 
     public TvPosterListComponent(Context context, @Nullable AttributeSet attrs, String query, Integer genre, Integer network) {
@@ -52,7 +54,8 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
 
         Container container = ContainerLocator.locateComponent(context);
         SeriesRepository seriesRepository = container.getSeriesRepository();
-        presenter = new TvPosterListPresenter(this, seriesRepository, query, genre, network);
+        BaseSchedulerProvider schedulerProvider = container.getSchedulerProvider();
+        presenter = new TvPosterListPresenter(this, seriesRepository, schedulerProvider, query, genre, network);
     }
 
     @Override
