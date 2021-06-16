@@ -58,10 +58,7 @@ public class SeriesRepository {
     public Single<Genre> getGenreById(int genreId, int page, int pageSize) {
         return genreAPI.getById(genreId, pageSize, page)
                 .subscribeOn(schedulerProvider.io())
-                .flatMap(genre -> {
-
-                    return Single.just(genre);
-                });
+                .flatMap(Single::just);
     }
 
     public Single<List<Series>> getSeriesByGenreId(int genreId, int page, int pageSize) {
