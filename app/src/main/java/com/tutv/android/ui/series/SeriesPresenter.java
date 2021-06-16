@@ -7,6 +7,7 @@ import com.tutv.android.repository.SeriesRepository;
 import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 
 import java.lang.ref.WeakReference;
+import java.util.Optional;
 
 import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
@@ -18,6 +19,7 @@ public class SeriesPresenter {
     private final SeriesRepository seriesRepository;
     private final BaseSchedulerProvider schedulerProvider;
     private final int seriesId;
+    //Todo: el tratamiento del objeto series deberia ser a traves de un Optional, pero no estamos en ese api level...
     private Series series;
 
 
@@ -28,6 +30,8 @@ public class SeriesPresenter {
         this.seriesId = seriesId;
         this.seriesRepository = seriesRepository;
         this.schedulerProvider = schedulerProvider;
+
+        this.series = null;
 
         this.disposables = new CompositeDisposable();
     }
@@ -94,6 +98,7 @@ public class SeriesPresenter {
     }
 
     public void onSeriesFollowClicked() {
+        if(series == null) return;
         if(series.getLoggedInUserFollows() == null || !series.getLoggedInUserFollows()) {
             disposables.add(seriesRepository.setFollowSeries(series)
                     .observeOn(schedulerProvider.ui())
@@ -113,6 +118,7 @@ public class SeriesPresenter {
     }
 
     private void onSeriesUnfollowed(Series series) {
+        if(series == null) return;
         SeriesView view = seriesView.get();
         if(view != null) {
             view.showSeriesFollowed(false);
@@ -128,6 +134,7 @@ public class SeriesPresenter {
     }
 
     private void onSeriesFollowed(Series series) {
+        if(series == null) return;
         SeriesView view = seriesView.get();
         if(view != null) {
             view.showFollowerCount(series.getFollowers());

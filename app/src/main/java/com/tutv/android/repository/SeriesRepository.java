@@ -52,7 +52,7 @@ public class SeriesRepository {
                         return Single.just(series);
                     }
                 })
-                .onErrorResumeNext(throwable -> seriesAPI.getSeriesById(id));
+                .onErrorResumeNext(throwable -> seriesAPI.getSeriesById(id).subscribeOn(schedulerProvider.io()).doOnSuccess(s -> seriesDao.insertWholeSeries(s)));
     }
 
     public Single<Genre> getGenreById(int genreId, int page, int pageSize) {
@@ -113,6 +113,8 @@ public class SeriesRepository {
                 .subscribeOn(schedulerProvider.io())
                 .flatMap(resourceViewedDTO -> {
                     episode.setLoggedInUserViewed(resourceViewedDTO.isViewedByUser());
+                    seriesDao.insert(series);
+                    seriesDao.insert(season);
                     seriesDao.insert(episode);
                     return Single.just(series);
                 });
