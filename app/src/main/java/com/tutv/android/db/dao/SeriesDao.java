@@ -50,6 +50,9 @@ public interface SeriesDao {
     @Delete
     void remove(Series s);
 
+    //@Query("SELECT * FROM series WHERE series.series_id IN (SELECT series_id FROM serieslists_and_series_map WHERE series_list_id = :listId)")
+    //Single<List<Series>> getSeriesListByListId(String listId);
+
     default void insertWholeSeries(Series series) {
         insert(series);
         for(Season season : series.getSeasons()) {

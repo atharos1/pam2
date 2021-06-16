@@ -26,11 +26,11 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         app:backgroundTint="@color/colorAccent"
+        android:src="@drawable/ic_star_empty"
         app:layout_constraintBottom_toBottomOf="@+id/slide_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/slide_image"
-        app:layout_constraintTop_toTopOf="@+id/slide_image"
-        app:srcCompat="@android:drawable/btn_star" />
+        app:layout_constraintTop_toTopOf="@+id/slide_image" />
 
     <ImageView
         android:id="@+id/imageView3"

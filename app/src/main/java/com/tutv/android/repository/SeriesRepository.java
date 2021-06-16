@@ -54,7 +54,16 @@ public class SeriesRepository {
     }
 
     public Single<Genre> getGenreById(int genreId, int page) {
-        return genreAPI.getById(genreId, 6, page).subscribeOn(schedulerProvider.io());
+        final String listId = "genre_" + genreId;
+
+
+
+        return genreAPI.getById(genreId, 6, page)
+                .subscribeOn(schedulerProvider.io())
+                .flatMap(genre -> {
+
+                    return Single.just(genre);
+                });
     }
 
     public Single<List<Series>> getSeriesSearch(String name, int page, Integer genre, Integer network) {
@@ -73,7 +82,6 @@ public class SeriesRepository {
         return networksAPI.getAll();
     }
 
-    //TODO porque carga en io? Eos bloquea la UI
     public Single<Series> setEpisodeViewed(Series series, Season season, Episode episode) {
         return seriesAPI.setSeriesViewed(series.getId(), season.getNumber(), episode.getNumEpisode(), new ResourceViewedDTO(episode.getLoggedInUserViewed() == null ? true : !episode.getLoggedInUserViewed()))
                 .subscribeOn(schedulerProvider.io())

@@ -38,6 +38,8 @@ public class TvPosterListPresenter {
 
     private final CompositeDisposable disposables;
 
+    private static final int PAGE_SIZE = 6;
+
     private int pageNumber = 1;
     private boolean loading = true;
 
