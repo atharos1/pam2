@@ -21,9 +21,6 @@ public class AuthorizationInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        /*if(!SessionManager.isAuthenticated())
-            return chain.proceed(chain.request());*/
-
         Request request = chain.request();
 
         Invocation invocation = request.tag(Invocation.class);
