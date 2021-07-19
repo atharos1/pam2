@@ -122,7 +122,6 @@ public class SearchActivity extends AppCompatActivity implements com.tutv.androi
         presenter.onViewDetached();
     }
 
-    //TODO recreas el componente cada vez?
     @Override
     public void setSearchQuery(String searchQuery, Integer genre, Integer network) {
         this.searchItem.expandActionView();

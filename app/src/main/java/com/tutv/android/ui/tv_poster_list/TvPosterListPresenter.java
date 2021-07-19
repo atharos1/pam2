@@ -27,6 +27,10 @@ public class TvPosterListPresenter {
     private Integer network;
     private Mode mode;
 
+    private int pageSize = 6;
+    private boolean loading = true;
+    private boolean reachedEnd = false;
+
     private final WeakReference<TvPosterListView> view;
     private final List<Series> seriesList;
     private final PublishProcessor<Integer> mPublishProcessor;
@@ -34,12 +38,6 @@ public class TvPosterListPresenter {
     private final BaseSchedulerProvider schedulerProvider;
 
     private final CompositeDisposable disposables;
-
-    private int pageSize = 6;
-
-    private boolean loading = true;
-
-    private boolean reachedEnd = false;
 
 
     public TvPosterListPresenter(TvPosterListView view, SeriesRepository seriesRepository,
@@ -142,8 +140,8 @@ public class TvPosterListPresenter {
         loading = false;
         if(actualView != null) {
             actualView.setLoadingStatus(false);
-            if (series.size() == 0)
-                actualView.finishLoading();
+            if (reachedEnd)
+                actualView.notifyEndReached();
         }
     }
 
@@ -163,5 +161,4 @@ public class TvPosterListPresenter {
     private int getPageNumber() {
         return seriesList.size() / pageSize;
     }
-
 }

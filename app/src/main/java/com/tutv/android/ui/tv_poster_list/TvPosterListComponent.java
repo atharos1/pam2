@@ -55,7 +55,7 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
         Container container = ContainerLocator.locateComponent(context);
         SeriesRepository seriesRepository = container.getSeriesRepository();
         BaseSchedulerProvider schedulerProvider = container.getSchedulerProvider();
-        presenter = new TvPosterListPresenter(this, seriesRepository, schedulerProvider, query, genre, network, 16);
+        presenter = new TvPosterListPresenter(this, seriesRepository, schedulerProvider, query, genre, network, 18);
     }
 
     @Override
@@ -134,7 +134,7 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
     }
 
     @Override
-    public void finishLoading() {
+    public void notifyEndReached() {
         listRecycleView.clearOnScrollListeners();
         scrollProgressBar.setVisibility(View.GONE);
         listRecycleView.setPadding(0, listRecycleView.getPaddingTop(), 0, 0);
@@ -142,7 +142,7 @@ public class TvPosterListComponent extends LinearLayout implements TvPosterListV
 
     @Override
     public void showLoadError() {
-        finishLoading();
+        notifyEndReached();
         progressBar.setVisibility(View.GONE);
         listRecycleView.setVisibility(View.GONE);
         textError.setVisibility(View.VISIBLE);
