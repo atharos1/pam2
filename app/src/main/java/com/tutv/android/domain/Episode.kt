@@ -12,16 +12,8 @@ import androidx.room.ForeignKey
         childColumns = arrayOf("season_id")
     )]
 )
-class Episode {
-    @PrimaryKey
-    @ColumnInfo(name = "episode_id")
-    var id = 0
-    var name: String? = null
-
-    @ColumnInfo(name = "num_episode")
-    var numEpisode = 0
-
-    @ColumnInfo(name = "season_id")
-    var seasonId = 0
-    var loggedInUserViewed: Boolean? = null
-}
+data class Episode(@PrimaryKey @ColumnInfo(name = "episode_id")  var id: Int = 0,
+                               @ColumnInfo(name = "num_episode") var numEpisode: Int = 0,
+                               @ColumnInfo(name = "season_id")   var seasonId: Int = 0,
+                                                                 var name: String? = null,
+                                                                 var loggedInUserViewed: Boolean? = null);
