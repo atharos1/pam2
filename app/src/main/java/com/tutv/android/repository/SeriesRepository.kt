@@ -139,10 +139,10 @@ class SeriesRepository(
     fun unfollowSeries(series: Series): Single<Series> {
         return userRepository.currentUser
             .subscribeOn(schedulerProvider.io())
-            .flatMap { user: User -> seriesAPI.setUnfollowSeries(user.id, series.id) }
-            .flatMap { seriesFollowedResponseDTO: SeriesFollowedResponseDTO ->
-                series.loggedInUserFollows = seriesFollowedResponseDTO.loggedInUserFollows
-                series.followers = seriesFollowedResponseDTO.followers
+            .flatMap { seriesAPI.setUnfollowSeries(it.id, series.id) }
+            .flatMap {
+                series.loggedInUserFollows = it.loggedInUserFollows
+                series.followers = it.followers
                 seriesDao.update(series)
                 Single.just(series)
             }
