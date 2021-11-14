@@ -6,10 +6,10 @@ import com.tutv.android.datasource.retrofit.endpoint.GenreAPI
 import com.tutv.android.datasource.retrofit.endpoint.NetworksAPI
 import com.tutv.android.utils.schedulers.BaseSchedulerProvider
 import com.tutv.android.datasource.dto.ResourceViewedDTO
-import com.tutv.android.datasource.dto.SeriesFollowedResponseDTO
 import com.tutv.android.datasource.dto.SeriesFollowedDTO
 import com.tutv.android.domain.*
 import io.reactivex.Single
+import io.reactivex.Single.just
 import java.util.*
 import java.util.Collections.EMPTY_LIST
 
@@ -24,34 +24,34 @@ class SeriesRepository(
     fun getSeriesById(id: Int): Single<Series> {
         return seriesDao.getFullSeriesById(id)
             .subscribeOn(schedulerProvider.io())
-            .flatMap { series ->
-                if ((series.seasons ?: EMPTY_LIST).isEmpty()) {
+            .flatMap {
+                if ((it.seasons ?: EMPTY_LIST).isEmpty()) {
                     return@flatMap seriesAPI.getSeriesById(id)
                         .subscribeOn(schedulerProvider.io())
                         .doOnSuccess { s -> seriesDao.insertWholeSeries(s) }
                 } else {
-                    return@flatMap Single.just(series)
+                    return@flatMap just(it)
                 }
             }
             .onErrorResumeNext {
                 seriesAPI.getSeriesById(id).subscribeOn(
                     schedulerProvider.io()
-                ).doOnSuccess { s: Series? -> seriesDao.insertWholeSeries(s) }
+                ).doOnSuccess { seriesDao.insertWholeSeries(it) }
             }
     }
 
     fun getGenreById(genreId: Int, page: Int, pageSize: Int): Single<Genre> {
         return genreAPI.getById(genreId, pageSize, page)
             .subscribeOn(schedulerProvider.io())
-            .flatMap { item: Genre? -> Single.just(item) }
+            .flatMap { just(it) }
     }
 
     fun getSeriesByGenreId(genreId: Int, page: Int, pageSize: Int): Single<List<Series>> {
         val listId = "genre_$genreId"
         return seriesDao.getSeriesListByListId(listId)
             .subscribeOn(schedulerProvider.io())
-            .flatMap { seriesList: List<Series>? ->
-                if (seriesList.isNullOrEmpty()) {
+            .flatMap {
+                if (it.isNullOrEmpty()) {
                     return@flatMap getSeriesSearch(null, page, genreId, null, pageSize)
                         .flatMap { sList: List<Series> ->
                             val seriesListAndSeriesMaps: MutableList<SeriesListAndSeriesMap> =
@@ -63,10 +63,10 @@ class SeriesRepository(
                                 )
                             )
                             seriesDao.insertAllMaps(seriesListAndSeriesMaps)
-                            Single.just(sList)
+                            just(sList)
                         }
                 } else {
-                    return@flatMap Single.just(seriesList)
+                    return@flatMap just(it)
                 }
             }
             .onErrorResumeNext {
@@ -89,9 +89,9 @@ class SeriesRepository(
     ): Single<List<Series>> {
         return seriesAPI.getSeriesSearch(name, pageSize, page, genre, network)
             .subscribeOn(schedulerProvider.io())
-            .flatMap { seriesList: List<Series> ->
-                seriesDao.insertAll(seriesList)
-                Single.just(seriesList)
+            .flatMap {
+                seriesDao.insertAll(it)
+                just(it)
             }
     }
 
@@ -110,12 +110,12 @@ class SeriesRepository(
             ResourceViewedDTO(episode.loggedInUserViewed?.not() ?: true)
         )
             .subscribeOn(schedulerProvider.io())
-            .flatMap { resourceViewedDTO: ResourceViewedDTO ->
-                episode.loggedInUserViewed = resourceViewedDTO.isViewedByUser
+            .flatMap {
+                episode.loggedInUserViewed = it.isViewedByUser
                 seriesDao.insert(series)
                 seriesDao.insert(season)
                 seriesDao.insert(episode)
-                Single.just(series)
+                just(series)
             }
     }
 
@@ -132,7 +132,7 @@ class SeriesRepository(
                 series.loggedInUserFollows = it.loggedInUserFollows
                 series.followers = it.followers
                 seriesDao.update(series)
-                Single.just(series)
+                just(series)
             }
     }
 
@@ -144,7 +144,7 @@ class SeriesRepository(
                 series.loggedInUserFollows = it.loggedInUserFollows
                 series.followers = it.followers
                 seriesDao.update(series)
-                Single.just(series)
+                just(series)
             }
     }
 }
