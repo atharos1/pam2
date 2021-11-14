@@ -13,8 +13,7 @@ class UserRepository(
     private val authenticationSharedPreferences: SharedPreferences
 ) {
     fun login(mail: String, password: String): Single<User> {
-        val credentials = "$mail:$password"
-        val encodedCredentials = Base64.encodeToString(credentials.toByteArray(), Base64.NO_WRAP)
+        val encodedCredentials = with("$mail:$password") { Base64.encodeToString(this.toByteArray(), Base64.NO_WRAP) }
         return userAPI.getCurrentUser("Basic $encodedCredentials")
     }
 
@@ -26,8 +25,9 @@ class UserRepository(
     }
 
     fun logout() {
-        val editor = authenticationSharedPreferences.edit()
-        editor.remove("Token")
-        editor.commit()
+        authenticationSharedPreferences.edit().apply {
+            remove("Token")
+            commit()
+        }
     }
 }
