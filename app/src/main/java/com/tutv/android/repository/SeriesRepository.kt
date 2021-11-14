@@ -107,7 +107,7 @@ class SeriesRepository(
             series.id,
             season.number,
             episode.numEpisode,
-            ResourceViewedDTO(if (episode.loggedInUserViewed == null) true else !episode.loggedInUserViewed!!)
+            ResourceViewedDTO(episode.loggedInUserViewed?.not() ?: true)
         )
             .subscribeOn(schedulerProvider.io())
             .flatMap { resourceViewedDTO: ResourceViewedDTO ->
