@@ -24,11 +24,11 @@ class SeriesRepository(
     fun getSeriesById(id: Int): Single<Series> {
         return seriesDao.getFullSeriesById(id)
             .subscribeOn(schedulerProvider.io())
-            .flatMap { series: Series ->
+            .flatMap { series ->
                 if ((series.seasons ?: EMPTY_LIST).isEmpty()) {
                     return@flatMap seriesAPI.getSeriesById(id)
                         .subscribeOn(schedulerProvider.io())
-                        .doOnSuccess { s: Series? -> seriesDao.insertWholeSeries(s) }
+                        .doOnSuccess { s -> seriesDao.insertWholeSeries(s) }
                 } else {
                     return@flatMap Single.just(series)
                 }
