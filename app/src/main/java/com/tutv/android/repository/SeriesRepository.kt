@@ -122,15 +122,15 @@ class SeriesRepository(
     fun setFollowSeries(series: Series): Single<Series> {
         return userRepository.currentUser
             .subscribeOn(schedulerProvider.io())
-            .flatMap { user: User ->
+            .flatMap {
                 seriesAPI.setFollowSeries(
-                    user.id,
+                    it.id,
                     SeriesFollowedDTO(series.id)
                 )
             }
-            .flatMap { seriesFollowedResponseDTO: SeriesFollowedResponseDTO ->
-                series.loggedInUserFollows = seriesFollowedResponseDTO.loggedInUserFollows
-                series.followers = seriesFollowedResponseDTO.followers
+            .flatMap {
+                series.loggedInUserFollows = it.loggedInUserFollows
+                series.followers = it.followers
                 seriesDao.update(series)
                 Single.just(series)
             }
