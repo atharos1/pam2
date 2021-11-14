@@ -21,6 +21,7 @@ public class ContainerModule {
 
     public ContainerModule(Context context) {
         this.applicationContext = context.getApplicationContext();
+        RetrofitInstance.INSTANCE.setAppContext(context);
     }
 
     Context getApplicationContext() {
