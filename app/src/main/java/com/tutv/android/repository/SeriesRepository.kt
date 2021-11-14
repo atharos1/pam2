@@ -51,7 +51,7 @@ class SeriesRepository(
         return seriesDao.getSeriesListByListId(listId)
             .subscribeOn(schedulerProvider.io())
             .flatMap { seriesList: List<Series>? ->
-                if (seriesList == null || seriesList.size == 0) {
+                if (seriesList.isNullOrEmpty()) {
                     return@flatMap getSeriesSearch(null, page, genreId, null, pageSize)
                         .flatMap { sList: List<Series> ->
                             val seriesListAndSeriesMaps: MutableList<SeriesListAndSeriesMap> =
@@ -69,7 +69,7 @@ class SeriesRepository(
                     return@flatMap Single.just(seriesList)
                 }
             }
-            .onErrorResumeNext { throwable: Throwable? ->
+            .onErrorResumeNext {
                 getSeriesSearch(
                     null,
                     page,
