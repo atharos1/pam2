@@ -111,7 +111,7 @@ class SeriesRepository(
         )
             .subscribeOn(schedulerProvider.io())
             .flatMap {
-                episode.loggedInUserViewed = it.isViewedByUser
+                episode.loggedInUserViewed = it.viewedByUser
                 seriesDao.insert(series)
                 seriesDao.insert(season)
                 seriesDao.insert(episode)
