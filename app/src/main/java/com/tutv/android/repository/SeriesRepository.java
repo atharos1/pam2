@@ -109,7 +109,7 @@ public class SeriesRepository {
         return seriesAPI.setSeriesViewed(series.getId(), season.getNumber(), episode.getNumEpisode(), new ResourceViewedDTO(episode.getLoggedInUserViewed() == null ? true : !episode.getLoggedInUserViewed()))
                 .subscribeOn(schedulerProvider.io())
                 .flatMap(resourceViewedDTO -> {
-                    episode.setLoggedInUserViewed(resourceViewedDTO.isViewedByUser());
+                    episode.setLoggedInUserViewed(resourceViewedDTO.getViewedByUser());
                     seriesDao.insert(series);
                     seriesDao.insert(season);
                     seriesDao.insert(episode);
