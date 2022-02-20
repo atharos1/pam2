@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "63b3eba5d4aa4c7fa99ca29afc143283",
+    "identityHash": "8d464036fd69c1d1f394be8f54df479f",
     "entities": [
       {
         "tableName": "user",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `mail` TEXT, `admin` INTEGER NOT NULL, `avatar` TEXT, `banned` INTEGER NOT NULL, `userName` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `mail` TEXT, `isAdmin` INTEGER NOT NULL, `avatar` TEXT, `isBanned` INTEGER NOT NULL, `userName` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -21,8 +21,8 @@
             "notNull": false
           },
           {
-            "fieldPath": "admin",
-            "columnName": "admin",
+            "fieldPath": "isAdmin",
+            "columnName": "isAdmin",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -33,8 +33,8 @@
             "notNull": false
           },
           {
-            "fieldPath": "banned",
-            "columnName": "banned",
+            "fieldPath": "isBanned",
+            "columnName": "isBanned",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -241,7 +241,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '63b3eba5d4aa4c7fa99ca29afc143283')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8d464036fd69c1d1f394be8f54df479f')"
     ]
   }
 }

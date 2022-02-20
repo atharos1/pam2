@@ -15,14 +15,14 @@ import retrofit2.http.*
 interface UserAPI {
     @AvoidForceShowLoginScreenOnAuthFail
     @GET("user")
-    fun getCurrentUser(@Header("Authorization") authHeader: String?): Single<User?>?
+    fun getCurrentUser(@Header("Authorization") authHeader: String?): Single<User>
 
     @get:GET("user")
     @get:AuthenticatedRequest
-    val currentUser: Single<User?>?
+    val currentUser: Single<User>
 
     @get:GET("user")
     @get:AuthenticatedRequest
     @get:AvoidForceShowLoginScreenOnAuthFail
-    val currentUserNoForceLoginScreenOnFail: Single<User?>?
+    val currentUserNoForceLoginScreenOnFail: Single<User>
 }

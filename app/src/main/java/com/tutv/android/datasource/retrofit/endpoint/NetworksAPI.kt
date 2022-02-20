@@ -18,5 +18,5 @@ import io.reactivex.Single
 interface NetworksAPI {
     @get:GET("networks")
     @get:AuthenticatedRequest
-    val all: Single<List<Network?>?>?
+    val all: Single<List<Network>>
 }
