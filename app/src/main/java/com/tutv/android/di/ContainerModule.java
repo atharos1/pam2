@@ -16,6 +16,8 @@ import com.tutv.android.repository.UserRepository;
 import com.tutv.android.utils.schedulers.BaseSchedulerProvider;
 import com.tutv.android.utils.schedulers.SchedulerProvider;
 
+import retrofit2.Retrofit;
+
 public class ContainerModule {
     private final Context applicationContext;
 

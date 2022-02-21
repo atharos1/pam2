@@ -48,12 +48,14 @@ class SeriesPresenter(
         view?.showError("Error al cargar la serie, asegurese de tener conexion")
     }
 
-    fun onEpisodeClicked(s: Season?, e: Episode?) {
-        disposables.add(seriesRepository.setEpisodeViewed(series, s, e)
+    fun onEpisodeClicked(s: Season, e: Episode) {
+        if (series == null) return
+
+        disposables.add(seriesRepository.setEpisodeViewed(series!!, s, e)
                 .observeOn(schedulerProvider.computation())
                 .flatMap { series: Series? ->
                     for (season in series?.seasons!!) {
-                        if (season.number == s?.number) {
+                        if (season.number == s.number) {
                             return@flatMap Single.just(s)
                         }
                     }
@@ -78,11 +80,11 @@ class SeriesPresenter(
         if (series == null) return
 
         if (series!!.loggedInUserFollows == null || !series?.loggedInUserFollows!!) {
-            disposables.add(seriesRepository.setFollowSeries(series)
+            disposables.add(seriesRepository.setFollowSeries(series!!)
                     .observeOn(schedulerProvider.ui())
                     .subscribe({ series: Series? -> onSeriesFollowed(series) }) { throwable: Throwable? -> onSeriesFollowedError(throwable) })
         } else {
-            disposables.add(seriesRepository.unfollowSeries(series)
+            disposables.add(seriesRepository.unfollowSeries(series!!)
                     .observeOn(schedulerProvider.ui())
                     .subscribe({ series: Series? -> onSeriesUnfollowed(series) }) { throwable: Throwable? -> onSeriesUnfollowedError(throwable) })
         }

@@ -31,7 +31,11 @@ class SeasonListAdapter(var seasonAndEpisodeClickedListener: SeasonAndEpisodeCli
         holder.setSeasonNumber(seasonList[position]?.number)
         holder.setEpisodes(seasonList[position]?.episodes)
         holder.setEpisodeListVisible(seasonList[position]?.isExpanded)
-        holder.setSeasonEpisodeClickListener { episode: Episode? -> seasonAndEpisodeClickedListener?.onClick(seasonList[position], episode) }
+        if (seasonList[position] != null) {
+            holder.setSeasonEpisodeClickListener {
+                episode: Episode -> seasonAndEpisodeClickedListener?.onClick(seasonList[position]!!, episode)
+            }
+        }
     }
 
     override fun getItemCount(): Int {

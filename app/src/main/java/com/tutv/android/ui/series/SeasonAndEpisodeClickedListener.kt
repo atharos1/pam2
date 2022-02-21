@@ -4,5 +4,5 @@ import com.tutv.android.domain.Episode
 import com.tutv.android.domain.Season
 
 fun interface SeasonAndEpisodeClickedListener {
-    fun onClick(s: Season?, e: Episode?)
+    fun onClick(s: Season, e: Episode)
 }

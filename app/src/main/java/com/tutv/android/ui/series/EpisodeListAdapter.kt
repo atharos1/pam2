@@ -11,7 +11,7 @@ import com.tutv.android.domain.Episode
 import java.util.*
 
 class EpisodeListAdapter : RecyclerView.Adapter<EpisodeListAdapter.ViewHolder?>() {
-    private val episodeList: MutableList<Episode?> = ArrayList()
+    private val episodeList: MutableList<Episode> = ArrayList()
     private var episodeClickListener: EpisodeClickListener? = null
     fun update(episodeList: List<Episode>?) {
         this.episodeList.clear()
@@ -27,8 +27,8 @@ class EpisodeListAdapter : RecyclerView.Adapter<EpisodeListAdapter.ViewHolder?>(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val episode = episodeList[position]
-        holder.setEpisodeName(episode?.numEpisode, episode?.name)
-        holder.setViewed(episode?.loggedInUserViewed ?: false)
+        holder.setEpisodeName(episode.numEpisode, episode.name)
+        holder.setViewed(episode.loggedInUserViewed ?: false)
         holder.setListenerPropagation { episodeClickListener?.onClick(episode) }
     }
 

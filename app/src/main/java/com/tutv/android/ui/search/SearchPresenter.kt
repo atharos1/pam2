@@ -16,37 +16,37 @@ class SearchPresenter(
     private var searchQuery: String? = null
     private var genre: Int = -1
     private var network: Int = -1
-    private var genres: MutableList<Genre?>? = null
-    private var networks: MutableList<Network?>? = null
+    private var genres: List<Genre?>? = null
+    private var networks: List<Network?>? = null
     private val disposables: CompositeDisposable = CompositeDisposable()
 
     fun onViewAttached() {
         disposables.add(seriesRepository.genres
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
-                .subscribe({ genres: MutableList<Genre?> -> onGenresReceived(genres) }) { e: Throwable? -> onLoadError(e) })
+                .subscribe({ genres: List<Genre?> -> onGenresReceived(genres) }) { e: Throwable? -> onLoadError(e) })
 
         disposables.add(seriesRepository.networks
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
-                .subscribe({ networks: MutableList<Network?> -> onNetworksReceived(networks) }) { e: Throwable? -> onLoadError(e) })
+                .subscribe({ networks: List<Network?> -> onNetworksReceived(networks) }) { e: Throwable? -> onLoadError(e) })
     }
 
     fun onViewDetached() {
         disposables.dispose()
     }
 
-    private fun onGenresReceived(genres: MutableList<Genre?>) {
+    private fun onGenresReceived(genres: List<Genre?>) {
         this.genres = genres
         if (networks != null && this.genres != null) {
-            view.get()?.setFilters(this.genres!!, networks!!)
+            view.get()?.setFilters(this.genres!! as MutableList<Genre?>, networks!! as MutableList<Network?>)
         }
     }
 
-    private fun onNetworksReceived(networks: MutableList<Network?>) {
+    private fun onNetworksReceived(networks: List<Network?>) {
         this.networks = networks
         if (genres != null && this.networks != null) {
-            view.get()?.setFilters(genres!!, this.networks!!)
+            view.get()?.setFilters(genres!! as MutableList<Genre?>, this.networks!! as MutableList<Network?>)
         }
     }
 

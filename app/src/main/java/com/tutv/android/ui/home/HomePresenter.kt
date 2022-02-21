@@ -18,7 +18,7 @@ class HomePresenter(
         disposables.add(seriesRepository.genres
                 .subscribeOn(schedulerProvider.computation())
                 .observeOn(schedulerProvider.ui())
-                .subscribe({ genres: MutableList<Genre> -> genresLoadSuccessful(genres) }) { e: Throwable? -> genresLoadError(e) }
+                .subscribe({ genres: List<Genre> -> genresLoadSuccessful(genres) }) { e: Throwable? -> genresLoadError(e) }
         )
     }
 
@@ -26,7 +26,7 @@ class HomePresenter(
         disposables.dispose()
     }
 
-    private fun genresLoadSuccessful(genres: MutableList<Genre>) {
+    private fun genresLoadSuccessful(genres: List<Genre>) {
         for (genre in genres) if (view.get() != null) view.get()?.createGenreList(genre.id, genre.name)
     }
 

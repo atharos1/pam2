@@ -38,7 +38,7 @@ class SeriesActivity : AppCompatActivity(), SeriesView {
         floatingActionButton = findViewById<View?>(R.id.follow_series_button) as FloatingActionButton?
         floatingActionButton?.setOnClickListener { seriesPresenter?.onSeriesFollowClicked() }
         seasonRecyclerView = findViewById<View?>(R.id.series_season_recyclerview) as RecyclerView?
-        seasonListAdapter = SeasonListAdapter { s: Season?, e: Episode? -> seriesPresenter?.onEpisodeClicked(s, e) }
+        seasonListAdapter = SeasonListAdapter { s: Season, e: Episode -> seriesPresenter?.onEpisodeClicked(s, e) }
         seasonRecyclerView?.adapter = seasonListAdapter
         supportActionBar?.hide()
         val container = ContainerLocator.locateComponent(this)

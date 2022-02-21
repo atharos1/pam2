@@ -129,16 +129,16 @@ class SearchActivity : AppCompatActivity(), SearchView {
         gSpinner?.visibility = View.VISIBLE
         nText?.visibility = View.VISIBLE
         nSpinner?.visibility = View.VISIBLE
-        genres.add(0, Genre(-1, getString(R.string.all_genres)))
 
+        genres.add(0, Genre(-1, getString(R.string.all_genres)))
         val genreAdapter = ArrayAdapter(this@SearchActivity,
                 android.R.layout.simple_spinner_item,
                 genres)
 
         genreAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         gSpinner?.adapter = genreAdapter
-        networks.add(0, Network(-1, getString(R.string.all_networks)))
 
+        networks.add(0, Network(-1, getString(R.string.all_networks)))
         val networkAdapter = ArrayAdapter(this@SearchActivity,
                 android.R.layout.simple_spinner_item,
                 networks)
