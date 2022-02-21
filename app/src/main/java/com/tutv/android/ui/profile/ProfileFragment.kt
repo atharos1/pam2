@@ -31,7 +31,7 @@ class ProfileFragment : Fragment(), ProfileView {
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val diContainer = ContainerLocator.locateComponent(context)
+        val diContainer = ContainerLocator.locateContainer(requireContext())
         val userRepository = diContainer.userRepository
         val schedulerProvider = diContainer.schedulerProvider
         presenter = ProfilePresenter(this, userRepository, schedulerProvider)

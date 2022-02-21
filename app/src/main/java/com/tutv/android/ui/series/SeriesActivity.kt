@@ -41,7 +41,7 @@ class SeriesActivity : AppCompatActivity(), SeriesView {
         seasonListAdapter = SeasonListAdapter { s: Season, e: Episode -> seriesPresenter?.onEpisodeClicked(s, e) }
         seasonRecyclerView?.adapter = seasonListAdapter
         supportActionBar?.hide()
-        val container = ContainerLocator.locateComponent(this)
+        val container = ContainerLocator.locateContainer(this)
         val seriesRepository = container.seriesRepository
         val schedulerProvider = container.schedulerProvider
         if (seriesId != null) seriesPresenter = SeriesPresenter(this, seriesId, seriesRepository, schedulerProvider)

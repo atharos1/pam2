@@ -35,7 +35,7 @@ class TvPosterComponent(itemView: View) : RecyclerView.ViewHolder(itemView), TvP
     }
 
     init {
-        val container = ContainerLocator.locateComponent(itemView.context)
+        val container = ContainerLocator.locateContainer(itemView.context)
         val seriesRepository = container.seriesRepository
         presenter = TvPosterPresenter(this, seriesRepository)
         itemView.setOnClickListener { presenter.onClick() }

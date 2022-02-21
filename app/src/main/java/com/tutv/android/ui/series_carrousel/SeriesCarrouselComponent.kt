@@ -47,8 +47,8 @@ class SeriesCarrouselComponent(context: Context?) : LinearLayout(context), Serie
     }
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.series_carrousel, this, true)
-        val container = ContainerLocator.locateComponent(context)
+        LayoutInflater.from(context!!).inflate(R.layout.series_carrousel, this, true)
+        val container = ContainerLocator.locateContainer(context!!)
         val seriesRepository = container.seriesRepository
         val schedulerProvider = container.schedulerProvider
         presenter = SeriesCarrouselPresenter(this, seriesRepository, schedulerProvider)

@@ -30,7 +30,7 @@ class SearchActivity : AppCompatActivity(), SearchView {
         setContentView(R.layout.activity_search)
         filterDialog = createDialog()
         layout = findViewById(R.id.search_layout)
-        val container = ContainerLocator.locateComponent(this)
+        val container = ContainerLocator.locateContainer(this)
         val seriesRepository = container.seriesRepository
         val schedulerProvider = container.schedulerProvider
         presenter = SearchPresenter(this, seriesRepository, schedulerProvider)

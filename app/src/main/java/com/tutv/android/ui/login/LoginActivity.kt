@@ -23,7 +23,7 @@ class LoginActivity : AppCompatActivity(), LoginView, View.OnClickListener {
         editPassword = findViewById<View?>(R.id.loginTxtPassword) as EditText?
         btnLogin = findViewById<View?>(R.id.btlogin) as Button?
         btnLogin?.setOnClickListener(this)
-        val container = ContainerLocator.locateComponent(this)
+        val container = ContainerLocator.locateContainer(this)
         val userRepository = container.userRepository
         val schedulerProvider = container.schedulerProvider
         presenter = LoginPresenter(this, userRepository, schedulerProvider)

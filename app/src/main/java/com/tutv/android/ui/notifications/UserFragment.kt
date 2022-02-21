@@ -21,7 +21,7 @@ class UserFragment : Fragment(), UserView {
         val root = inflater.inflate(R.layout.fragment_user, container, false)
         userAvatarCircleImageView = root.findViewById(R.id.useravatar_circleimageview)
         userNameTextView = root.findViewById(R.id.username_textview)
-        val appContainer = ContainerLocator.locateComponent(context)
+        val appContainer = ContainerLocator.locateContainer(requireContext())
         val userRepository = appContainer.userRepository
         val schedulerProvider = appContainer.schedulerProvider
         userPresenter = UserPresenter(this, userRepository, schedulerProvider)

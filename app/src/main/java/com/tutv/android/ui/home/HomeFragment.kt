@@ -21,7 +21,7 @@ class HomeFragment : Fragment(), HomeView {
     private var textError: TextView? = null
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val diContainer = ContainerLocator.locateComponent(context)
+        val diContainer = ContainerLocator.locateContainer(requireContext())
         val seriesRepository = diContainer.seriesRepository
         val schedulerProvider = diContainer.schedulerProvider
         presenter = HomePresenter(this, seriesRepository, schedulerProvider)

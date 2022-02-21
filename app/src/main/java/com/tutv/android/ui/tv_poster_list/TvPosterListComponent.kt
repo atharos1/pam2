@@ -27,7 +27,7 @@ class TvPosterListComponent : LinearLayout, TvPosterListView {
     constructor(context: Context?, attrs: AttributeSet?, genreId: Int, genreName: String?) : super(context, attrs) {
         gridLayout = false
         LayoutInflater.from(context).inflate(R.layout.tv_poster_list, this, true)
-        val container = ContainerLocator.locateComponent(context)
+        val container = ContainerLocator.locateContainer(context!!)
         val seriesRepository = container.seriesRepository
         val schedulerProvider = container.schedulerProvider
         presenter = TvPosterListPresenter(this, seriesRepository, schedulerProvider, genreId, genreName, 6)
@@ -36,7 +36,7 @@ class TvPosterListComponent : LinearLayout, TvPosterListView {
     constructor(context: Context?, attrs: AttributeSet?, query: String?, genre: Int?, network: Int?) : super(context, attrs) {
         gridLayout = true
         LayoutInflater.from(context).inflate(R.layout.tv_poster_list, this, true)
-        val container = ContainerLocator.locateComponent(context)
+        val container = ContainerLocator.locateContainer(context!!)
         val seriesRepository = container.seriesRepository
         val schedulerProvider = container.schedulerProvider
         presenter = TvPosterListPresenter(this, seriesRepository, schedulerProvider, query, genre, network, 18)

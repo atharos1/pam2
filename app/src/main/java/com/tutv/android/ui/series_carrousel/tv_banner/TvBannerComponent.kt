@@ -58,7 +58,7 @@ class TvBannerComponent(itemView: View) : RecyclerView.ViewHolder(itemView), TvB
     }
 
     init {
-        val container = ContainerLocator.locateComponent(itemView.context)
+        val container = ContainerLocator.locateContainer(itemView.context)
         val seriesRepository = container.seriesRepository
         val schedulerProvider = container.schedulerProvider
         presenter = TvBannerPresenter(this, seriesRepository, schedulerProvider)
