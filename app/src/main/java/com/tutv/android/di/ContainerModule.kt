@@ -45,7 +45,9 @@ class ContainerModule(context: Context) {
             userRepository,
             schedulerProvider)
 
-    fun provideSeriesDao(): SeriesDao = AppDatabase.getInstance(applicationContext).seriesDao()
+    fun provideSeriesDao(): SeriesDao {
+        return AppDatabase.getInstance(applicationContext).seriesDao()
+    }
 
     fun provideSeriesAPI(): SeriesAPI = getRetrofitClient(applicationContext).create(SeriesAPI::class.java)
 
