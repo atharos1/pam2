@@ -149,8 +149,8 @@ class SeriesRepository(
             }
     }
 
-    fun getReviews(series: Series): Single<List<Review>> {
-        return seriesAPI.getSeriesReviewsList(series.id)
+    fun getReviews(seriesId: Int): Single<List<Review>> {
+        return seriesAPI.getSeriesReviewsList(seriesId)
             .subscribeOn(schedulerProvider.io())
     }
 

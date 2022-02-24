@@ -1,8 +1,7 @@
 package com.tutv.android.ui.series
 
-import com.tutv.android.domain.Episode
-import com.tutv.android.domain.Season
-import com.tutv.android.domain.Series
+import android.util.Log
+import com.tutv.android.domain.*
 import com.tutv.android.repository.SeriesRepository
 import com.tutv.android.utils.schedulers.BaseSchedulerProvider
 import io.reactivex.Single
@@ -17,6 +16,7 @@ class SeriesPresenter(
 
     private val seriesView: WeakReference<SeriesView?> = WeakReference(seriesView)
     private var series: Series? = null
+    private var reviews: MutableList<Review>? = null
     private val disposables: CompositeDisposable = CompositeDisposable()
 
     fun onViewAttached() {
@@ -24,6 +24,12 @@ class SeriesPresenter(
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
                 .subscribe({ series: Series? -> onSeriesLoad(series) }) { e: Throwable? -> onSeriesLoadError(e) })
+
+        disposables.add(seriesRepository.getReviews(seriesId)
+                .subscribeOn(schedulerProvider.io())
+                .observeOn(schedulerProvider.ui())
+                //TODO onReviewsLoadError
+                .subscribe({ reviews: List<Review> -> onReviewsLoad(reviews) }) { e: Throwable? -> onSeriesLoadError(e) })
     }
 
     fun onViewDetached() {
@@ -41,6 +47,12 @@ class SeriesPresenter(
             actualView.bindSeasons(series?.seasons)
             actualView.showSeriesBanner(series?.bannerUrl)
         }
+    }
+
+    private fun onReviewsLoad(reviews: List<Review>?) {
+        this.reviews = mutableListOf()
+        this.reviews?.add(Review(0, 1, "def", emptyList(), User(), false))
+        seriesView.get()?.bindReviews(this.reviews)
     }
 
     private fun onSeriesLoadError(e: Throwable?) {

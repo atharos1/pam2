@@ -1,10 +1,9 @@
 package com.tutv.android.ui.series
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.CollapsingToolbarLayout
@@ -13,7 +12,9 @@ import com.squareup.picasso.Picasso
 import com.tutv.android.R
 import com.tutv.android.di.ContainerLocator
 import com.tutv.android.domain.Episode
+import com.tutv.android.domain.Review
 import com.tutv.android.domain.Season
+import com.tutv.android.domain.User
 
 class SeriesActivity : AppCompatActivity(), SeriesView {
     private var seriesPresenter: SeriesPresenter? = null
@@ -23,6 +24,7 @@ class SeriesActivity : AppCompatActivity(), SeriesView {
     private var seriesBannerImageView: ImageView? = null
     private var floatingActionButton: FloatingActionButton? = null
     private var seasonRecyclerView: RecyclerView? = null
+    private var reviewRecyclerView: RecyclerView? = null
     private var seriesCollapsingToolbarLayout: CollapsingToolbarLayout? = null
     private var seasonListAdapter: SeasonListAdapter? = null
 
@@ -40,6 +42,7 @@ class SeriesActivity : AppCompatActivity(), SeriesView {
         seasonRecyclerView = findViewById<View?>(R.id.series_season_recyclerview) as RecyclerView?
         seasonListAdapter = SeasonListAdapter { s: Season, e: Episode -> seriesPresenter?.onEpisodeClicked(s, e) }
         seasonRecyclerView?.adapter = seasonListAdapter
+        reviewRecyclerView = findViewById<View?>(R.id.series_reviews_recycleview) as RecyclerView?
         supportActionBar?.hide()
         val container = ContainerLocator.locateContainer(this)
         val seriesRepository = container.seriesRepository
@@ -80,6 +83,10 @@ class SeriesActivity : AppCompatActivity(), SeriesView {
 
     override fun bindSeason(season: Season?) {
         seasonListAdapter?.updateSeason(season)
+    }
+
+    override fun bindReviews(reviewList: List<Review>?) {
+        reviewRecyclerView?.adapter = ReviewListAdapter(reviewList!!)
     }
 
     override fun showSeriesFollowed(followed: Boolean) {
