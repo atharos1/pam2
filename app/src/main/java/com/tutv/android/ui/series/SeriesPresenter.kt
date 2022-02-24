@@ -51,7 +51,7 @@ class SeriesPresenter(
 
     private fun onReviewsLoad(reviews: List<Review>?) {
         this.reviews = mutableListOf()
-        this.reviews?.add(Review(0, 1, "def", emptyList(), User(), false))
+        this.reviews?.add(Review(0, 1,1, "def", emptyList(), User(), false))
         seriesView.get()?.bindReviews(this.reviews)
     }
 
