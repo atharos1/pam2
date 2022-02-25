@@ -13,4 +13,11 @@ import androidx.room.PrimaryKey
         childColumns = arrayOf("series_id")
     )]
 )
-data class Review   (@PrimaryKey @ColumnInfo(name = "review_id") var id: Long, @ColumnInfo(name = "series_id") val seriesId: Int, var likes: Long, var body: String, var seriesReviewComments: List<ReviewComment> = emptyList(), var user: User, var spam: Boolean)
+data class Review   (@PrimaryKey @ColumnInfo(name = "review_id") var id: Long,
+                                 @ColumnInfo(name = "series_id") val seriesId: Int,
+                                                                 var likes: Long,
+                                                                 var body: String,
+                                                                 var loggedInUserLikes: Boolean? = null,
+                                                                 var seriesReviewComments: List<ReviewComment> = emptyList(),
+                                                                 var user: User,
+                                                                 var spam: Boolean)

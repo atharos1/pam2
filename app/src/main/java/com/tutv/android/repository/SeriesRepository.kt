@@ -12,6 +12,7 @@ import com.tutv.android.datasource.dto.SeriesFollowedDTO
 import com.tutv.android.domain.*
 import io.reactivex.Single
 import io.reactivex.Single.just
+import io.reactivex.schedulers.Schedulers
 import java.util.*
 import java.util.Collections.EMPTY_LIST
 
@@ -24,13 +25,13 @@ class SeriesRepository(
     private val schedulerProvider: BaseSchedulerProvider
 ) {
     fun getSeriesById(id: Int): Single<Series> {
-        return seriesDao.getFullSeriesById(id)
+        return getFullSeriesById(id)
             .subscribeOn(schedulerProvider.io())
             .flatMap {
                 if ((it.seasons ?: EMPTY_LIST).isEmpty()) {
                     return@flatMap seriesAPI.getSeriesById(id)
                         .subscribeOn(schedulerProvider.io())
-                        .doOnSuccess { s -> seriesDao.insertWholeSeries(s) }
+                        .doOnSuccess { s -> insertWholeSeries(s) }
                 } else {
                     return@flatMap just(it)
                 }
@@ -38,7 +39,7 @@ class SeriesRepository(
             .onErrorResumeNext {
                 seriesAPI.getSeriesById(id).subscribeOn(
                     schedulerProvider.io()
-                ).doOnSuccess { seriesDao.insertWholeSeries(it) }
+                ).doOnSuccess { insertWholeSeries(it) }
             }
     }
 
@@ -160,6 +161,7 @@ class SeriesRepository(
             .subscribeOn(schedulerProvider.io())
             .flatMap {
                 review.likes = it.numLikes.toLong()
+                review.loggedInUserLikes = it.loggedInUserLikes
                 just(review)
             }
     }
@@ -171,4 +173,30 @@ class SeriesRepository(
                     just(it)
                 }
     }
+
+    private fun insertWholeSeries(series: Series) {
+        seriesDao.insert(series)
+        for (season in series.seasons!!) {
+            season.seriesId = series.id
+            seriesDao.insert(season)
+            for (episode in season.episodes!!) {
+                episode.seasonId = season.id
+                seriesDao.insert(episode)
+            }
+        }
+    }
+
+    private fun getFullSeriesById(id: Int): Single<Series> {
+        return seriesDao.getSeriesById(id)
+            .observeOn(Schedulers.io())
+            .doOnSuccess { series: Series ->
+                val seasons = seriesDao.getSeasonsFromSeries(id).observeOn(Schedulers.io()).blockingGet()
+                series.seasons = seasons
+                for (season in seasons) {
+                    val episodes = seriesDao.getEpisodesFromSeasons(season.id).blockingGet()
+                    season.episodes = episodes
+                }
+            }
+    }
+
 }

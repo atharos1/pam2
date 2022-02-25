@@ -23,7 +23,7 @@ class ReviewListAdapter(var reviewList: List<Review>,
         val review = reviewList[position]
         holder.setReviewName(review.user.userName)
         holder.setReviewBody(review.body)
-        holder.setReviewLiked(false)
+        holder.setReviewLiked(review.loggedInUserLikes ?: false)
         holder.setLikes(review.likes)
         holder.setListenerPropagation { reviewLikeClickedListener?.onClick(review) }
     }

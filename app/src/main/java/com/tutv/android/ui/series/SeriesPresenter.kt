@@ -132,15 +132,9 @@ class SeriesPresenter(
     fun onReviewLikeClicked(r: Review) {
         if (series == null) return
 
-        if (true) {
-            disposables.add(seriesRepository.setReviewLiked(series!!, r, true)
-                    .observeOn(schedulerProvider.ui())
-                    .subscribe({ review: Review? -> onReviewLiked(review) }) { throwable: Throwable? -> onReviewLikedError(throwable) })
-        } else {
-            disposables.add(seriesRepository.setReviewLiked(series!!, r, false)
-                    .observeOn(schedulerProvider.ui())
-                    .subscribe({ review: Review? -> onReviewLiked(review) }) { throwable: Throwable? -> onReviewLikedError(throwable) })
-        }
+        disposables.add(seriesRepository.setReviewLiked(series!!, r, !(r.loggedInUserLikes ?: false))
+                .observeOn(schedulerProvider.ui())
+                .subscribe({ review: Review? -> onReviewLiked(review) }) { throwable: Throwable? -> onReviewLikedError(throwable) })
     }
 
     private fun onReviewLiked(r: Review?) {
