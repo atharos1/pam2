@@ -19,10 +19,11 @@ class SeriesCarrouselPresenter(
 
     private fun seriesLoadSuccessful(series: List<Series?>) {
         seriesList = series
-        if (view.get() != null) view.get()?.setLoadingStatus(false)
+        view.get()?.setLoadingStatus(false)
     }
 
     private fun seriesLoadError(e: Throwable?) {}
+
     fun getItemCount(): Int {
         return seriesList.size
     }

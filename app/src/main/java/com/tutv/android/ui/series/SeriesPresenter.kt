@@ -28,8 +28,7 @@ class SeriesPresenter(
         disposables.add(seriesRepository.getReviews(seriesId)
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
-                //TODO onReviewsLoadError
-                .subscribe({ reviews: List<Review> -> onReviewsLoad(reviews) }) { e: Throwable? -> onSeriesLoadError(e) })
+                .subscribe({ reviews: List<Review> -> onReviewsLoad(reviews) }) { e: Throwable? -> onReviewsLoadError(e) })
     }
 
     fun onViewDetached() {
@@ -51,17 +50,17 @@ class SeriesPresenter(
 
     private fun onReviewsLoad(reviews: List<Review>?) {
         this.reviews = reviews?.toMutableList()
-        /*this.reviews = mutableListOf()
-        this.reviews?.add(Review(0, 1, "La peor serie que vi en mi vida. La trama no tiene sentido, el personaje principal es superficial e irrelevante, y los efectos especiales me hicieron sangrar los ojos.", emptyList(), User(), false))
-        this.reviews?.get(0)?.user?.userName = "Juan de los palotes"
-        this.reviews?.add(Review(1, 10, "Una hermosa serie para compartir en familia.", emptyList(), User(), false))
-        this.reviews?.get(1)?.user?.userName = "Lola Mento"*/
         seriesView.get()?.bindReviews(this.reviews)
     }
 
     private fun onSeriesLoadError(e: Throwable?) {
         val view = seriesView.get()
         view?.showError("Error al cargar la serie, asegurese de tener conexion")
+    }
+
+    private fun onReviewsLoadError(e: Throwable?) {
+        val view = seriesView.get()
+        view?.showError("Error al cargar los comentarios, asegurese de tener conexion")
     }
 
     fun onEpisodeClicked(s: Season, e: Episode) {
