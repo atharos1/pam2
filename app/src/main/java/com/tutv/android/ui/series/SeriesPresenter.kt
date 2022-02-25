@@ -1,6 +1,5 @@
 package com.tutv.android.ui.series
 
-import android.util.Log
 import com.tutv.android.domain.*
 import com.tutv.android.repository.SeriesRepository
 import com.tutv.android.utils.schedulers.BaseSchedulerProvider
