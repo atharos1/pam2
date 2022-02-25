@@ -62,7 +62,9 @@ class SeasonListAdapter(var seasonAndEpisodeClickedListener: SeasonAndEpisodeCli
         }
 
         fun setEpisodes(episodesList: List<Episode>?) {
-            episodeListAdapter.update(episodesList)
+            val mutableEpisodesList = episodesList?.toMutableList()
+            mutableEpisodesList?.sortWith { o1, o2 -> o1.numEpisode - o2.numEpisode }
+            episodeListAdapter.update(mutableEpisodesList)
         }
 
         fun setEpisodeListVisible(visible: Boolean?) {

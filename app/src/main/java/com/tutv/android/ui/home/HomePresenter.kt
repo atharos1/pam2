@@ -27,7 +27,7 @@ class HomePresenter(
     }
 
     private fun genresLoadSuccessful(genres: List<Genre>) {
-        for (genre in genres) if (view.get() != null) view.get()?.createGenreList(genre.id, genre.name)
+        for (genre in genres) view.get()?.createGenreList(genre.id, genre.name)
     }
 
     private fun genresLoadError(e: Throwable?) {

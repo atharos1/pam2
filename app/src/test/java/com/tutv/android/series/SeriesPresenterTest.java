@@ -1,8 +1,10 @@
 package com.tutv.android.series;
 
 import com.tutv.android.domain.Episode;
+import com.tutv.android.domain.Review;
 import com.tutv.android.domain.Season;
 import com.tutv.android.domain.Series;
+import com.tutv.android.domain.User;
 import com.tutv.android.repository.SeriesRepository;
 import com.tutv.android.ui.series.SeriesPresenter;
 import com.tutv.android.ui.series.SeriesView;
@@ -13,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Single;
@@ -40,7 +43,12 @@ public class SeriesPresenterTest {
     private Episode episode;
     private List<Episode> episodes;
 
+    private final int reviewId = 1;
+    private final String reviewBody = "A series review";
+    private final int reviewLikes = 5;
+
     private Series series;
+    private List<Review> reviews;
 
     private SeriesPresenter presenter;
 
@@ -67,12 +75,19 @@ public class SeriesPresenterTest {
         series.setSeasons(seriesSeasons);
         series.setBannerUrl(seriesBannerUrl);
 
+        reviews = new ArrayList<>();
+        reviews.add(new Review(
+                reviewId, seriesId, reviewLikes, reviewBody, false,
+                Collections.emptyList(), new User(), false
+        ));
+
         presenter = new SeriesPresenter(view, seriesId, seriesRepository, schedulerProvider);
     }
 
     @Test
     public void givenTheViewWasAttechedThenShowSeries() {
         when(seriesRepository.getSeriesById(seriesId)).thenReturn(Single.just(series));
+        when(seriesRepository.getReviews(seriesId)).thenReturn(Single.just(reviews));
 
         presenter.onViewAttached();
 
@@ -86,8 +101,9 @@ public class SeriesPresenterTest {
     }
 
     @Test
-    public void givenTheViewWasAttechedWhenNetworkErrorThenShowError() {
+    public void givenTheViewWasAttechedWhenNetworkForSeriesErrorThenShowError() {
         when(seriesRepository.getSeriesById(seriesId)).thenReturn(Single.error(new Throwable()));
+        when(seriesRepository.getReviews(seriesId)).thenReturn(Single.just(reviews));
 
         presenter.onViewAttached();
 
@@ -98,6 +114,7 @@ public class SeriesPresenterTest {
     @Test
     public void givenAnEpisodeWasClickedThenSetEpisodeAsViewed() {
         when(seriesRepository.getSeriesById(seriesId)).thenReturn(Single.just(series));
+        when(seriesRepository.getReviews(seriesId)).thenReturn(Single.just(reviews));
         when(seriesRepository.setEpisodeViewed(series, season, episode)).thenReturn(Single.just(series));
 
         presenter.onViewAttached();
@@ -109,6 +126,7 @@ public class SeriesPresenterTest {
     @Test
     public void givenAnEpisodeWasClickedWhenNetworkErrorThenShowError() {
         when(seriesRepository.getSeriesById(seriesId)).thenReturn(Single.just(series));
+        when(seriesRepository.getReviews(seriesId)).thenReturn(Single.just(reviews));
         when(seriesRepository.setEpisodeViewed(series, season, episode)).thenReturn(Single.error(new Throwable()));
 
         presenter.onViewAttached();
@@ -121,6 +139,7 @@ public class SeriesPresenterTest {
     @Test
     public void givenASeriesWasFollowedWhenNotFollowingThenSetItAsFollowed() {
         when(seriesRepository.getSeriesById(seriesId)).thenReturn(Single.just(series));
+        when(seriesRepository.getReviews(seriesId)).thenReturn(Single.just(reviews));
         when(seriesRepository.setFollowSeries(series)).thenReturn(Single.just(series));
 
         presenter.onViewAttached();
@@ -134,6 +153,7 @@ public class SeriesPresenterTest {
     @Test
     public void givenASeriesWasFollowedWhenNotFollowingAndNetworkErrorThenShowError() {
         when(seriesRepository.getSeriesById(seriesId)).thenReturn(Single.just(series));
+        when(seriesRepository.getReviews(seriesId)).thenReturn(Single.just(reviews));
         when(seriesRepository.setFollowSeries(series)).thenReturn(Single.error(new Throwable()));
 
         presenter.onViewAttached();
@@ -145,6 +165,7 @@ public class SeriesPresenterTest {
     @Test
     public void givenASeriesWasFollowedWhenFollowingThenSetItAsUnfollowed() {
         when(seriesRepository.getSeriesById(seriesId)).thenReturn(Single.just(series));
+        when(seriesRepository.getReviews(seriesId)).thenReturn(Single.just(reviews));
         when(seriesRepository.unfollowSeries(series)).thenReturn(Single.just(series));
 
         series.setLoggedInUserFollows(true);
@@ -160,6 +181,7 @@ public class SeriesPresenterTest {
     @Test
     public void givenASeriesWasFollowedWhenFollowingAndNetworkErrorThenShowError() {
         when(seriesRepository.getSeriesById(seriesId)).thenReturn(Single.just(series));
+        when(seriesRepository.getReviews(seriesId)).thenReturn(Single.just(reviews));
         when(seriesRepository.unfollowSeries(series)).thenReturn(Single.error(new Throwable()));
 
         series.setLoggedInUserFollows(true);
@@ -167,6 +189,79 @@ public class SeriesPresenterTest {
         presenter.onViewAttached();
         presenter.onSeriesFollowClicked();
 
+        verify(view, timeout(1000).times(1)).showError(any());
+    }
+
+    @Test
+    public void givenTheViewWasAttechedThenShowReviews() {
+        when(seriesRepository.getSeriesById(seriesId)).thenReturn(Single.just(series));
+        when(seriesRepository.getReviews(seriesId)).thenReturn(Single.just(reviews));
+
+        presenter.onViewAttached();
+
+        verify(seriesRepository, timeout(1000).times(1)).getReviews(seriesId);
+        verify(view, timeout(1000).times(1)).bindReviews(reviews);
+    }
+
+    @Test
+    public void givenTheViewWasAttechedWhenNetworkForReviewsErrorThenShowError() {
+        when(seriesRepository.getSeriesById(seriesId)).thenReturn(Single.just(series));
+        when(seriesRepository.getReviews(seriesId)).thenReturn(Single.error(new Throwable()));
+
+        presenter.onViewAttached();
+
+        verify(seriesRepository, timeout(1000).times(1)).getReviews(seriesId);
+        verify(view, timeout(1000).times(1)).showError(any());
+    }
+
+    @Test
+    public void givenAReviewLikeWasClickedThenSetReviewAsLiked() {
+        when(seriesRepository.getSeriesById(seriesId)).thenReturn(Single.just(series));
+        when(seriesRepository.getReviews(seriesId)).thenReturn(Single.just(reviews));
+        when(seriesRepository.setReviewLiked(series, reviews.get(0), true)).thenReturn(Single.just(reviews.get(0)));
+
+        presenter.onViewAttached();
+        presenter.onReviewLikeClicked(reviews.get(0));
+
+        verify(view, timeout(1000).times(2)).bindReviews(reviews);
+    }
+
+    @Test
+    public void givenAReviewLikeWasClickedWhenNetworkErrorThenShowError() {
+        when(seriesRepository.getSeriesById(seriesId)).thenReturn(Single.just(series));
+        when(seriesRepository.getReviews(seriesId)).thenReturn(Single.just(reviews));
+        when(seriesRepository.setReviewLiked(series, reviews.get(0), true)).thenReturn(Single.error(new Throwable()));
+
+        presenter.onViewAttached();
+        presenter.onReviewLikeClicked(reviews.get(0));
+
+        verify(view, timeout(1000).times(1)).bindReviews(reviews);
+        verify(view, timeout(1000).times(1)).showError(any());
+    }
+
+    @Test
+    public void givenReviewSubmitWasClickedThenPostReview() {
+        when(seriesRepository.getSeriesById(seriesId)).thenReturn(Single.just(series));
+        when(seriesRepository.getReviews(seriesId)).thenReturn(Single.just(reviews));
+        when(seriesRepository.postReview(series, reviewBody)).thenReturn(Single.just(reviews.get(0)));
+
+        presenter.onViewAttached();
+        presenter.onReviewSubmitClicked(reviewBody);
+
+        verify(seriesRepository, timeout(1000).times(1)).postReview(series, reviewBody);
+        verify(view, timeout(1000).times(2)).bindReviews(any());
+    }
+
+    @Test
+    public void givenReviewSubmitWasClickedWhenNetworkErrorThenShowError() {
+        when(seriesRepository.getSeriesById(seriesId)).thenReturn(Single.just(series));
+        when(seriesRepository.getReviews(seriesId)).thenReturn(Single.just(reviews));
+        when(seriesRepository.postReview(series, reviewBody)).thenReturn(Single.error(new Throwable()));
+
+        presenter.onViewAttached();
+        presenter.onReviewSubmitClicked(reviewBody);
+
+        verify(view, timeout(1000).times(1)).bindReviews(any());
         verify(view, timeout(1000).times(1)).showError(any());
     }
 }

@@ -32,11 +32,14 @@ class ProfilePresenter(
 
     private fun loadSuccessful(user: User) {
         this.user = user
-        view.get()?.setLoading(false)
-        view.get()?.setLayout(true)
-        view.get()?.setMail(user.mail)
-        view.get()?.setUsername(user.userName)
-        view.get()?.setProfileImage(user.avatar)
+        val actualView = view.get()
+        if (actualView != null) {
+            actualView.setLoading(false)
+            actualView.setLayout(true)
+            actualView.setMail(user.mail)
+            actualView.setUsername(user.userName)
+            actualView.setProfileImage(user.avatar)
+        }
     }
 
     private fun loadError(e: Throwable?) {

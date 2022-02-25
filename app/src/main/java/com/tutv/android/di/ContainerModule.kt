@@ -51,7 +51,7 @@ class ContainerModule(context: Context) {
 
     fun provideSeriesAPI(): SeriesAPI = getRetrofitClient(applicationContext).create(SeriesAPI::class.java)
 
-    fun provideSchedulerProvider(): BaseSchedulerProvider = SchedulerProvider.getInstance()
+    fun provideSchedulerProvider(): BaseSchedulerProvider = SchedulerProvider.instance!!
 
     fun provideSharedPreferences(name: String, mode: Int): SharedPreferences = applicationContext.getSharedPreferences(name, mode)
 }
