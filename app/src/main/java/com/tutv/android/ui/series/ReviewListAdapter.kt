@@ -9,7 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.tutv.android.R
 import com.tutv.android.domain.Review
 
-class ReviewListAdapter(var reviewList: List<Review>) :
+class ReviewListAdapter(var reviewList: List<Review>,
+                        var reviewLikeClickedListener: ReviewLikeClickedListener?) :
         RecyclerView.Adapter<ReviewListAdapter.ViewHolder?>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -19,8 +20,12 @@ class ReviewListAdapter(var reviewList: List<Review>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.setReviewName(/*reviewList[position].user.userName*/ "UserPiola123")
-        holder.setReviewBody(reviewList[position].body)
+        val review = reviewList[position]
+        holder.setReviewName(review.user.userName)
+        holder.setReviewBody(review.body)
+        holder.setReviewLiked(false)
+        holder.setLikes(review.likes)
+        holder.setListenerPropagation { reviewLikeClickedListener?.onClick(review) }
     }
 
     override fun getItemCount(): Int {
@@ -30,16 +35,30 @@ class ReviewListAdapter(var reviewList: List<Review>) :
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val reviewNameTextView: TextView? = itemView.findViewById(R.id.review_name)
         private val reviewBodyTextView: TextView? = itemView.findViewById(R.id.review_body)
-        private val viewedCheckmarkImageView: ImageView? = itemView.findViewById(R.id.viewed_checkmark)
+        private val reviewLikedImageView: ImageView? = itemView.findViewById(R.id.like_button)
+        private val reviewLikesTextView: TextView? = itemView.findViewById(R.id.likes_count)
 
         fun setReviewName(name: String?) {
             reviewNameTextView?.text = name
-            viewedCheckmarkImageView?.visibility = View.INVISIBLE
         }
 
         fun setReviewBody(body: String?) {
             reviewBodyTextView?.text = body
-            viewedCheckmarkImageView?.visibility = View.INVISIBLE
+        }
+
+        fun setReviewLiked(liked: Boolean?) {
+            if (liked == true)
+                reviewLikedImageView?.setImageResource(R.drawable.ic_baseline_thumb_up_24_filled)
+            else
+                reviewLikedImageView?.setImageResource(R.drawable.ic_baseline_thumb_up_24)
+        }
+
+        fun setLikes(liked: Long?) {
+            reviewLikesTextView?.text = "$liked"
+        }
+
+        fun setListenerPropagation(c: Callback?) {
+            reviewLikedImageView?.setOnClickListener{ c?.call() }
         }
     }
 }

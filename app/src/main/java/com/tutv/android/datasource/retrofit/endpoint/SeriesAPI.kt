@@ -65,6 +65,13 @@ interface SeriesAPI {
         @Body reviewLikedDTO: ReviewLikedDTO
     ): Single<ReviewLikedDTOResponse>
 
+    @AuthenticatedRequest
+    @POST("series/{seriesId}/reviews/")
+    fun postReview(
+            @Path("seriesId") seriesId: Int,
+            @Body reviewDTO: ReviewDTO
+    ): Single<Review>
+
     @get:GET("series/featured")
     @get:AuthenticatedRequest
     val featured: Single<List<Series>>

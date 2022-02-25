@@ -27,11 +27,16 @@ class SeriesActivity : AppCompatActivity(), SeriesView {
     private var reviewRecyclerView: RecyclerView? = null
     private var seriesCollapsingToolbarLayout: CollapsingToolbarLayout? = null
     private var seasonListAdapter: SeasonListAdapter? = null
+    private var reviewsProgressBar: ProgressBar? = null
+    private var reviewsMessageTextView: TextView? = null
+    private var reviewsEditText: EditText? = null
+    private var reviewSubmitButton: Button? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val seriesId = intent.extras?.getInt("series_id")
         setContentView(R.layout.activity_series)
+
         seriesDescriptionTextView = findViewById<View?>(R.id.series_description) as TextView?
         seriesFollowerCountTextView = findViewById<View?>(R.id.series_follower_count) as TextView?
         seriesCollapsingToolbarLayout = findViewById<View?>(R.id.series_collapsing_toolbar) as CollapsingToolbarLayout?
@@ -43,7 +48,16 @@ class SeriesActivity : AppCompatActivity(), SeriesView {
         seasonListAdapter = SeasonListAdapter { s: Season, e: Episode -> seriesPresenter?.onEpisodeClicked(s, e) }
         seasonRecyclerView?.adapter = seasonListAdapter
         reviewRecyclerView = findViewById<View?>(R.id.series_reviews_recycleview) as RecyclerView?
+        reviewsProgressBar = findViewById<View?>(R.id.reviews_progressbar) as ProgressBar?
+        reviewsMessageTextView = findViewById<View?>(R.id.reviews_message) as TextView?
+        reviewsEditText = findViewById<View?>(R.id.reviews_text_input) as EditText?
+        reviewSubmitButton = findViewById<View?>(R.id.review_submit) as Button?
+        reviewSubmitButton?.setOnClickListener {
+            seriesPresenter?.onReviewSubmitClicked(reviewsEditText?.text.toString())
+            reviewsEditText?.setText("")
+        }
         supportActionBar?.hide()
+
         val container = ContainerLocator.locateContainer(this)
         val seriesRepository = container.seriesRepository
         val schedulerProvider = container.schedulerProvider
@@ -86,7 +100,12 @@ class SeriesActivity : AppCompatActivity(), SeriesView {
     }
 
     override fun bindReviews(reviewList: List<Review>?) {
-        reviewRecyclerView?.adapter = ReviewListAdapter(reviewList!!)
+        reviewsProgressBar?.visibility = View.GONE
+        if ((reviewList?.size ?: 0) > 0)
+            reviewsMessageTextView?.visibility = View.GONE
+        else
+            reviewsMessageTextView?.visibility = View.VISIBLE
+        reviewRecyclerView?.adapter = ReviewListAdapter(reviewList!!) { r: Review -> seriesPresenter?.onReviewLikeClicked(r) }
     }
 
     override fun showSeriesFollowed(followed: Boolean) {

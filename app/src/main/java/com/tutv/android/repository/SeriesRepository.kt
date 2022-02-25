@@ -6,6 +6,7 @@ import com.tutv.android.datasource.retrofit.endpoint.GenreAPI
 import com.tutv.android.datasource.retrofit.endpoint.NetworksAPI
 import com.tutv.android.utils.schedulers.BaseSchedulerProvider
 import com.tutv.android.datasource.dto.ResourceViewedDTO
+import com.tutv.android.datasource.dto.ReviewDTO
 import com.tutv.android.datasource.dto.ReviewLikedDTO
 import com.tutv.android.datasource.dto.SeriesFollowedDTO
 import com.tutv.android.domain.*
@@ -161,5 +162,13 @@ class SeriesRepository(
                 review.likes = it.numLikes.toLong()
                 just(review)
             }
+    }
+
+    fun postReview(series: Series, body: String): Single<Review> {
+        return seriesAPI.postReview(series.id, ReviewDTO(body, false))
+                .subscribeOn(schedulerProvider.io())
+                .flatMap {
+                    just(it)
+                }
     }
 }
