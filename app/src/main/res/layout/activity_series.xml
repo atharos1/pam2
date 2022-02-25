@@ -56,6 +56,7 @@
             android:layout_height="match_parent"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
             android:orientation="vertical">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -71,12 +72,74 @@
                 android:id="@+id/series_follower_count"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/series_follower_count"
                 android:layout_margin="5dp"
                 android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:id="@+id/series_season_recyclerview"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:textColor="@color/white"
+                android:layout_below="@id/series_season_recyclerview"
+                android:text="@string/discussion"
+                android:id="@+id/series_reviews_title"/>
+            <EditText
+                android:id="@+id/reviews_text_input"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_below="@id/series_reviews_title"
+                android:background="#353535"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginVertical="8dp"
+                android:padding="6dp"
+                android:hint="@string/enter_your_comment"
+                android:textColorHint="#757575"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:lines="6"
+                android:minLines="2"
+                android:gravity="top|start"
+                android:maxLines="6"
+                android:inputType="textMultiLine"/>
+
+            <Button
+                android:id="@+id/review_submit"
+                android:layout_width="125dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/reviews_text_input"
+                android:layout_alignEnd="@+id/reviews_text_input"
+                android:layout_marginBottom="5dp"
+                android:text="@string/submit"
+                android:textColor="@color/black" />
+
+            <ProgressBar
+                android:id="@+id/reviews_progressbar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/review_submit" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:layout_margin="5dp"
+                android:textColor="@color/white"
+                android:layout_below="@id/review_submit"
+                android:text="@string/no_comments_yet"
+                android:visibility="gone"
+                android:id="@+id/reviews_message"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/series_reviews_recycleview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/review_submit"
+                android:layout_margin="5dp"
+                android:background="@color/black"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:nestedScrollingEnabled="false" />
         </RelativeLayout>
 
     </androidx.core.widget.NestedScrollView>

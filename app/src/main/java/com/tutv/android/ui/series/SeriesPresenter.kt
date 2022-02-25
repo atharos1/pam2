@@ -1,8 +1,7 @@
 package com.tutv.android.ui.series
 
-import com.tutv.android.domain.Episode
-import com.tutv.android.domain.Season
-import com.tutv.android.domain.Series
+import android.util.Log
+import com.tutv.android.domain.*
 import com.tutv.android.repository.SeriesRepository
 import com.tutv.android.utils.schedulers.BaseSchedulerProvider
 import io.reactivex.Single
@@ -17,6 +16,7 @@ class SeriesPresenter(
 
     private val seriesView: WeakReference<SeriesView?> = WeakReference(seriesView)
     private var series: Series? = null
+    private var reviews: MutableList<Review>? = null
     private val disposables: CompositeDisposable = CompositeDisposable()
 
     fun onViewAttached() {
@@ -24,6 +24,12 @@ class SeriesPresenter(
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
                 .subscribe({ series: Series? -> onSeriesLoad(series) }) { e: Throwable? -> onSeriesLoadError(e) })
+
+        disposables.add(seriesRepository.getReviews(seriesId)
+                .subscribeOn(schedulerProvider.io())
+                .observeOn(schedulerProvider.ui())
+                //TODO onReviewsLoadError
+                .subscribe({ reviews: List<Review> -> onReviewsLoad(reviews) }) { e: Throwable? -> onSeriesLoadError(e) })
     }
 
     fun onViewDetached() {
@@ -41,6 +47,16 @@ class SeriesPresenter(
             actualView.bindSeasons(series?.seasons)
             actualView.showSeriesBanner(series?.bannerUrl)
         }
+    }
+
+    private fun onReviewsLoad(reviews: List<Review>?) {
+        this.reviews = reviews?.toMutableList()
+        /*this.reviews = mutableListOf()
+        this.reviews?.add(Review(0, 1, "La peor serie que vi en mi vida. La trama no tiene sentido, el personaje principal es superficial e irrelevante, y los efectos especiales me hicieron sangrar los ojos.", emptyList(), User(), false))
+        this.reviews?.get(0)?.user?.userName = "Juan de los palotes"
+        this.reviews?.add(Review(1, 10, "Una hermosa serie para compartir en familia.", emptyList(), User(), false))
+        this.reviews?.get(1)?.user?.userName = "Lola Mento"*/
+        seriesView.get()?.bindReviews(this.reviews)
     }
 
     private fun onSeriesLoadError(e: Throwable?) {
@@ -66,14 +82,11 @@ class SeriesPresenter(
     }
 
     private fun onEpisodeViewedError(throwable: Throwable?) {
-        System.err.println(throwable)
-        val view = seriesView.get()
-        view?.showError("Error al ver el episodio, asegurese de tener conexion y estar logueado")
+        seriesView.get()?.showError("Error al ver el episodio, asegurese de tener conexion y estar logueado")
     }
 
     private fun onEpisodeViewed(season: Season?) {
-        val view = seriesView.get()
-        view?.bindSeason(season)
+        seriesView.get()?.bindSeason(season)
     }
 
     fun onSeriesFollowClicked() {
@@ -91,8 +104,7 @@ class SeriesPresenter(
     }
 
     private fun onSeriesUnfollowedError(throwable: Throwable?) {
-        val view = seriesView.get()
-        view?.showError("Error al dejar de seguir la serie, asegurese de tener conexion y estar logueado")
+        seriesView.get()?.showError("Error al dejar de seguir la serie, asegurese de tener conexion y estar logueado")
     }
 
     private fun onSeriesUnfollowed(series: Series?) {
@@ -105,8 +117,7 @@ class SeriesPresenter(
     }
 
     private fun onSeriesFollowedError(throwable: Throwable?) {
-        val view = seriesView.get()
-        view?.showError("Error al seguir la serie, asegurese de tener conexion y estar logueado")
+        seriesView.get()?.showError("Error al seguir la serie, asegurese de tener conexion y estar logueado")
     }
 
     private fun onSeriesFollowed(series: Series?) {
@@ -116,6 +127,41 @@ class SeriesPresenter(
             view.showFollowerCount(series.followers)
             view.showSeriesFollowed(series.loggedInUserFollows ?: false)
         }
+    }
+
+    fun onReviewLikeClicked(r: Review) {
+        if (series == null) return
+
+        disposables.add(seriesRepository.setReviewLiked(series!!, r, !(r.loggedInUserLikes ?: false))
+                .observeOn(schedulerProvider.ui())
+                .subscribe({ review: Review? -> onReviewLiked(review) }) { throwable: Throwable? -> onReviewLikedError(throwable) })
+    }
+
+    private fun onReviewLiked(r: Review?) {
+        seriesView.get()?.bindReviews(this.reviews)
+    }
+
+    private fun onReviewLikedError(throwable: Throwable?) {
+        seriesView.get()?.showError("Error al dar me gusta al comentario, asegurese de tener conexion y estar logueado")
+    }
+
+    fun onReviewSubmitClicked(body: String?) {
+        if (series == null || body.isNullOrEmpty()) return
+
+        disposables.add(seriesRepository.postReview(series!!, body)
+                .observeOn(schedulerProvider.ui())
+                .subscribe({ review: Review? -> onReviewSubmitted(review) }) { throwable: Throwable? -> onReviewSubmittedError(throwable) })
+    }
+
+    private fun onReviewSubmitted(r: Review?) {
+        if (r != null) {
+            this.reviews?.add(0, r)
+            seriesView.get()?.bindReviews(this.reviews)
+        }
+    }
+
+    private fun onReviewSubmittedError(throwable: Throwable?) {
+        seriesView.get()?.showError("Error al publicar el comentario, asegurese de tener conexion y estar logueado")
     }
 
 }

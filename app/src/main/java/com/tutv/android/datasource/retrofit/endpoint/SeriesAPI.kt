@@ -1,11 +1,10 @@
 package com.tutv.android.datasource.retrofit.endpoint
 
+import com.tutv.android.datasource.dto.*
 import com.tutv.android.datasource.retrofit.annotation.AuthenticatedRequest
 import com.tutv.android.domain.Series
-import com.tutv.android.datasource.dto.ResourceViewedDTO
 import com.tutv.android.domain.Episode
-import com.tutv.android.datasource.dto.SeriesFollowedDTO
-import com.tutv.android.datasource.dto.SeriesFollowedResponseDTO
+import com.tutv.android.domain.Review
 import io.reactivex.Single
 import retrofit2.http.*
 
@@ -51,6 +50,27 @@ interface SeriesAPI {
         @Path("userId") userId: Int,
         @Path("seriesId") seriesId: Int
     ): Single<SeriesFollowedResponseDTO>
+
+    @AuthenticatedRequest
+    @GET("series/{seriesId}/reviews")
+    fun getSeriesReviewsList(
+        @Path("seriesId") seriesId: Int
+    ): Single<List<Review>>
+
+    @AuthenticatedRequest
+    @PUT("series/{seriesId}/reviews/{reviewId}/like")
+    fun setReviewLiked(
+        @Path("seriesId") seriesId: Int,
+        @Path("reviewId") reviewId: Int,
+        @Body reviewLikedDTO: ReviewLikedDTO
+    ): Single<ReviewLikedDTOResponse>
+
+    @AuthenticatedRequest
+    @POST("series/{seriesId}/reviews/")
+    fun postReview(
+            @Path("seriesId") seriesId: Int,
+            @Body reviewDTO: ReviewDTO
+    ): Single<Review>
 
     @get:GET("series/featured")
     @get:AuthenticatedRequest

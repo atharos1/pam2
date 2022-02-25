@@ -20,6 +20,10 @@
     <string name="network">Network</string>
     <string name="all_networks">All networks</string>
     <string name="apply_filters">Apply filters</string>
+    <string name="discussion">Discussion</string>
+    <string name="no_comments_yet">There are no comments for this series yet</string>
+    <string name="enter_your_comment">Enter your comment here</string>
+    <string name="submit">Submit</string>
     <string name="load_error">Sorry! We were unable to complete your request. Please check your internet connection.</string>
     <string name="login_suggestion">Enjoy a lot more TuTv by logging in with an account, or signing up if you don\'t have one! It\'s free, easy, and fun!</string>
 </resources>

@@ -112,7 +112,7 @@
       },
       {
         "tableName": "season",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`season_id` INTEGER NOT NULL, `number` INTEGER NOT NULL, `series_id` INTEGER NOT NULL, PRIMARY KEY(`season_id`), FOREIGN KEY(`series_id`) REFERENCES `series`(`series_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`season_id` INTEGER NOT NULL, `series_id` INTEGER NOT NULL, `number` INTEGER NOT NULL, PRIMARY KEY(`season_id`), FOREIGN KEY(`series_id`) REFERENCES `series`(`series_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -121,14 +121,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "number",
-            "columnName": "number",
+            "fieldPath": "seriesId",
+            "columnName": "series_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "seriesId",
-            "columnName": "series_id",
+            "fieldPath": "number",
+            "columnName": "number",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -156,19 +156,13 @@
       },
       {
         "tableName": "Episode",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`episode_id` INTEGER NOT NULL, `name` TEXT, `num_episode` INTEGER NOT NULL, `season_id` INTEGER NOT NULL, `loggedInUserViewed` INTEGER, PRIMARY KEY(`episode_id`), FOREIGN KEY(`season_id`) REFERENCES `season`(`season_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`episode_id` INTEGER NOT NULL, `num_episode` INTEGER NOT NULL, `season_id` INTEGER NOT NULL, `name` TEXT, `loggedInUserViewed` INTEGER, PRIMARY KEY(`episode_id`), FOREIGN KEY(`season_id`) REFERENCES `season`(`season_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "episode_id",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": false
           },
           {
             "fieldPath": "numEpisode",
@@ -181,6 +175,12 @@
             "columnName": "season_id",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "loggedInUserViewed",

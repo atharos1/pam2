@@ -1,10 +1,9 @@
 package com.tutv.android.ui.series
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.CollapsingToolbarLayout
@@ -13,7 +12,9 @@ import com.squareup.picasso.Picasso
 import com.tutv.android.R
 import com.tutv.android.di.ContainerLocator
 import com.tutv.android.domain.Episode
+import com.tutv.android.domain.Review
 import com.tutv.android.domain.Season
+import com.tutv.android.domain.User
 
 class SeriesActivity : AppCompatActivity(), SeriesView {
     private var seriesPresenter: SeriesPresenter? = null
@@ -23,13 +24,19 @@ class SeriesActivity : AppCompatActivity(), SeriesView {
     private var seriesBannerImageView: ImageView? = null
     private var floatingActionButton: FloatingActionButton? = null
     private var seasonRecyclerView: RecyclerView? = null
+    private var reviewRecyclerView: RecyclerView? = null
     private var seriesCollapsingToolbarLayout: CollapsingToolbarLayout? = null
     private var seasonListAdapter: SeasonListAdapter? = null
+    private var reviewsProgressBar: ProgressBar? = null
+    private var reviewsMessageTextView: TextView? = null
+    private var reviewsEditText: EditText? = null
+    private var reviewSubmitButton: Button? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val seriesId = intent.extras?.getInt("series_id")
         setContentView(R.layout.activity_series)
+
         seriesDescriptionTextView = findViewById<View?>(R.id.series_description) as TextView?
         seriesFollowerCountTextView = findViewById<View?>(R.id.series_follower_count) as TextView?
         seriesCollapsingToolbarLayout = findViewById<View?>(R.id.series_collapsing_toolbar) as CollapsingToolbarLayout?
@@ -40,7 +47,17 @@ class SeriesActivity : AppCompatActivity(), SeriesView {
         seasonRecyclerView = findViewById<View?>(R.id.series_season_recyclerview) as RecyclerView?
         seasonListAdapter = SeasonListAdapter { s: Season, e: Episode -> seriesPresenter?.onEpisodeClicked(s, e) }
         seasonRecyclerView?.adapter = seasonListAdapter
+        reviewRecyclerView = findViewById<View?>(R.id.series_reviews_recycleview) as RecyclerView?
+        reviewsProgressBar = findViewById<View?>(R.id.reviews_progressbar) as ProgressBar?
+        reviewsMessageTextView = findViewById<View?>(R.id.reviews_message) as TextView?
+        reviewsEditText = findViewById<View?>(R.id.reviews_text_input) as EditText?
+        reviewSubmitButton = findViewById<View?>(R.id.review_submit) as Button?
+        reviewSubmitButton?.setOnClickListener {
+            seriesPresenter?.onReviewSubmitClicked(reviewsEditText?.text.toString())
+            reviewsEditText?.setText("")
+        }
         supportActionBar?.hide()
+
         val container = ContainerLocator.locateContainer(this)
         val seriesRepository = container.seriesRepository
         val schedulerProvider = container.schedulerProvider
@@ -80,6 +97,15 @@ class SeriesActivity : AppCompatActivity(), SeriesView {
 
     override fun bindSeason(season: Season?) {
         seasonListAdapter?.updateSeason(season)
+    }
+
+    override fun bindReviews(reviewList: List<Review>?) {
+        reviewsProgressBar?.visibility = View.GONE
+        if ((reviewList?.size ?: 0) > 0)
+            reviewsMessageTextView?.visibility = View.GONE
+        else
+            reviewsMessageTextView?.visibility = View.VISIBLE
+        reviewRecyclerView?.adapter = ReviewListAdapter(reviewList!!) { r: Review -> seriesPresenter?.onReviewLikeClicked(r) }
     }
 
     override fun showSeriesFollowed(followed: Boolean) {
