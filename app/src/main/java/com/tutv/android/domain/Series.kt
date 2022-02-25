@@ -17,7 +17,10 @@ class Series {
     var bannerUrl: String? = null
     var posterUrl: String? = null
 
+
     @Ignore
     var seasons: List<Season>? = null
+    @Ignore
+    var reviews: List<Review>? = null
     var loggedInUserFollows: Boolean? = null
 }
